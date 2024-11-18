@@ -23,22 +23,26 @@ function getDeploymentAddress(networkName, contractName) {
 
 const func = async function (hre: HardhatRuntimeEnvironment) {
 
+    const NATIVE_SYMBOL = "ETH"
     const {TOKENS} = getConfig(hre.network.name);
+    const tokens = TOKENS.filter(r => r.symbol !== NATIVE_SYMBOL)
 
     let result
 
     const otherClientTag = hre.network.name === 'sepolia' ? 'Client' : ''
-    for (const token of TOKENS) {
+    const clientTag = hre.network.name === 'sepolia' ? '' : 'Client'
+
+    for (const token of tokens) {
         const otherChain = token.otherChain === 'binance'
             ? 'bnbTestnet'
             : token.otherChain === 'ethereum-sepolia'
                 ? 'sepolia'
                 : token.otherChain
 
-        let clientContractAddress = getDeploymentAddress(otherChain, token.kToken.symbol + "MessageHub" + clientTag);
+        let clientContractAddress = getDeploymentAddress(otherChain, token.kToken.symbol + "MessageHub" + otherClientTag);
         if (clientContractAddress !== '') {
             console.log(`Configuring ${token.kToken.symbol}MessageHub${clientTag} for ${token.kToken.name}...\n`);
-            const messageHubAddress = (await hre.deployments.get(token.kToken.symbol + "MessageHubClient")).address;
+            const messageHubAddress = (await hre.deployments.get(token.kToken.symbol + "MessageHub" + clientTag)).address;
             const MessageHubContract = await hre.ethers.getContractAt("MessageHubClient", messageHubAddress)
             result = await MessageHubContract._setClientContract(token.otherChainMessageHub);
             await result.wait(1);
