@@ -1,0 +1,1473 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0x47713F7479325aDc777CA3973F478640f4903806",
+    "txHash": "0x426f6883e1cac129698244a8c24e0db70bb1a7b576221ce1689f8afe9187afb1"
+  },
+  "proxies": [
+    {
+      "address": "0xD67219296b51788B26e0162d4037a643fd35986d",
+      "txHash": "0xd55f180c234ac69c64ec8e6fba6164f7a77f7438d5037b150219c04c4125a717",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xE82fDEE72c6B7F729c66c281f2CDf33b0B2CF23f",
+      "txHash": "0x01c8cc1113a7b3d1f795fed0af8f0710a74bc7cc3df3f67c14d433a9e0197e3f",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "5d7d58a5aeb8b1ee2e0dd34f1a24298ce75dbb2f415f79144fbd0b4e0eba9662": {
+      "address": "0x1fBAD335D0D55Bc3f34caA3e5583B88d227F3cdF",
+      "txHash": "0x0f0a7106cd7c6c0c36abf05caac9a9dc3e2d085e3f0bf552bab240a8d151c5dc",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:40"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "gateway",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IAxelarGateway)541",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:16"
+          },
+          {
+            "label": "gasReceiver",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IAxelarGasService)476",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:17"
+          },
+          {
+            "label": "baseContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:19"
+          },
+          {
+            "label": "baseChain",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IAxelarGasService)476": {
+            "label": "contract IAxelarGasService",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IAxelarGateway)541": {
+            "label": "contract IAxelarGateway",
+            "numberOfBytes": "20"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    },
+    "1f8ac08520a44b08f7c811a8d29743689fc77849931a56396bb3d9f97b93be83": {
+      "address": "0x74263826850FfDE70dAf33D3aD3D469AFd381318",
+      "txHash": "0x47b4aa9b4a19597ea6480e2fc6e9b5024c0e1ba57a48dd2136fbe630a07171dd",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:40"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "gateway",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IAxelarGateway)541",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:16"
+          },
+          {
+            "label": "gasReceiver",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IAxelarGasService)476",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:17"
+          },
+          {
+            "label": "baseContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:19"
+          },
+          {
+            "label": "baseChain",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IAxelarGasService)476": {
+            "label": "contract IAxelarGasService",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IAxelarGateway)541": {
+            "label": "contract IAxelarGateway",
+            "numberOfBytes": "20"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    },
+    "fa4220b06e9c8aa2c4ff490d2c8dd2e8b765338d93f0f307ddf90103bc9c04bf": {
+      "address": "0x844d3B82135070fFB7B270D18f168742AB104991",
+      "txHash": "0x58d1c204bfc3804781df8cdf2dc0cb3ff5bec914e424df3ef0183917b67ce631",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:40"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "gateway",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IAxelarGateway)541",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:16"
+          },
+          {
+            "label": "gasReceiver",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IAxelarGasService)476",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:17"
+          },
+          {
+            "label": "baseContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:19"
+          },
+          {
+            "label": "baseChain",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IAxelarGasService)476": {
+            "label": "contract IAxelarGasService",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IAxelarGateway)541": {
+            "label": "contract IAxelarGateway",
+            "numberOfBytes": "20"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    },
+    "4110119d9bd9f2f41d9ebfbafe4182a8f9490ee7f5fe45fd846c7a79346c99d6": {
+      "address": "0xc4a52f81aBbE4c4E1B4B04C2A8d53dDD5290C04b",
+      "txHash": "0xa6ddfd36e30993358b7a34b72702e1f276c472abe3d7997f057deb53b1e9ba31",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:40"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "gateway",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IAxelarGateway)541",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:16"
+          },
+          {
+            "label": "gasReceiver",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IAxelarGasService)476",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:17"
+          },
+          {
+            "label": "baseContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:19"
+          },
+          {
+            "label": "baseChain",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IAxelarGasService)476": {
+            "label": "contract IAxelarGasService",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IAxelarGateway)541": {
+            "label": "contract IAxelarGateway",
+            "numberOfBytes": "20"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    },
+    "9c8cc537bd05eb16c474956b55ab5f549c3af9f7b9c7d5993bbc8feb98580e46": {
+      "address": "0xc63Ea7Df0131cec9A2532d1e293858572F0903e9",
+      "txHash": "0x517baaa5138213ee3a38f1c5fede80763ec180866c6381bd166275452fc27b0f",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:40"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "gateway",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IAxelarGateway)541",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:16"
+          },
+          {
+            "label": "gasReceiver",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IAxelarGasService)476",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:17"
+          },
+          {
+            "label": "baseContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:19"
+          },
+          {
+            "label": "baseChain",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IAxelarGasService)476": {
+            "label": "contract IAxelarGasService",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IAxelarGateway)541": {
+            "label": "contract IAxelarGateway",
+            "numberOfBytes": "20"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    },
+    "153dfd66eec094ddd8a3f978966812a810fc37036800413d31eca30207770c87": {
+      "address": "0x5a1E3B5E76F48Aec2412ef19CF0D7b85267c4c53",
+      "txHash": "0x8cd524fb3f089ec277251f6733ef02e823ce29868d0271fb49bff168af1eefb9",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:40"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "gateway",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IAxelarGateway)541",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:16"
+          },
+          {
+            "label": "gasReceiver",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IAxelarGasService)476",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:17"
+          },
+          {
+            "label": "baseContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:19"
+          },
+          {
+            "label": "baseChain",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IAxelarGasService)476": {
+            "label": "contract IAxelarGasService",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IAxelarGateway)541": {
+            "label": "contract IAxelarGateway",
+            "numberOfBytes": "20"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    },
+    "e907f3ada53cfbc090d5a39ac243d292b54725c02db4f0d501b723a3847e3385": {
+      "address": "0xA02b30D1778c1894b63Ee5faf93bea76F3EaccFa",
+      "txHash": "0xbd12ceb590aa7c80a49283495c4f67965ac9f2bb97bc15b3325f0768f1a55701",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:40"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "gateway",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IAxelarGateway)541",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:16"
+          },
+          {
+            "label": "gasReceiver",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IAxelarGasService)476",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:17"
+          },
+          {
+            "label": "baseContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:19"
+          },
+          {
+            "label": "baseChain",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IAxelarGasService)476": {
+            "label": "contract IAxelarGasService",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IAxelarGateway)541": {
+            "label": "contract IAxelarGateway",
+            "numberOfBytes": "20"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    },
+    "5d38af0abd02502e86d3db1ccd4ef519b6d05362b847f7df5f90c34033849c17": {
+      "address": "0xf34a1Be8e0E2A737EFA4055761b9324D002A4ef4",
+      "txHash": "0x0217dbd1076c67f493f550df8fdd9c6e5268bc9c759199f9693efb3df8023bdc",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:40"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "gateway",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IAxelarGateway)541",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:16"
+          },
+          {
+            "label": "gasReceiver",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IAxelarGasService)476",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:17"
+          },
+          {
+            "label": "baseContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:19"
+          },
+          {
+            "label": "baseChain",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IAxelarGasService)476": {
+            "label": "contract IAxelarGasService",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IAxelarGateway)541": {
+            "label": "contract IAxelarGateway",
+            "numberOfBytes": "20"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    },
+    "4c3491c7a64ded7a2a95a49bd5eaf127a5a9ce8203124292b58b2f7d56c88655": {
+      "address": "0x38Ed7b779a1b5A30dB23dd0ABA99A0f5577dd12b",
+      "txHash": "0x7237e888f7dcaf71fb0b4b29ca03ca3cb9a72dd5218bacfab0f5f0e40baae41b",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:40"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "gateway",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IAxelarGateway)541",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:16"
+          },
+          {
+            "label": "gasReceiver",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IAxelarGasService)476",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:17"
+          },
+          {
+            "label": "baseContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:19"
+          },
+          {
+            "label": "baseChain",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IAxelarGasService)476": {
+            "label": "contract IAxelarGasService",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IAxelarGateway)541": {
+            "label": "contract IAxelarGateway",
+            "numberOfBytes": "20"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    },
+    "a6ccb8164b7895b863e20a3f6244d2fdaa0470714ed4ff67de930b6f8982c155": {
+      "address": "0x944Ca25FaC8C6d16B48f17d81101A56A61752E01",
+      "txHash": "0x5ac4708424d7c833cc54a4fad670849b5f7b3d33493075f1d68c92b7a478cc95",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:40"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "gateway",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IAxelarGateway)541",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:16"
+          },
+          {
+            "label": "gasReceiver",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IAxelarGasService)476",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:17"
+          },
+          {
+            "label": "baseContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:19"
+          },
+          {
+            "label": "baseChain",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IAxelarGasService)476": {
+            "label": "contract IAxelarGasService",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IAxelarGateway)541": {
+            "label": "contract IAxelarGateway",
+            "numberOfBytes": "20"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    },
+    "74912d7178a5bafed4ab61cd7763c36a878012d4ded63d4f216063ca8302ce4a": {
+      "address": "0x85c78C92b50Fe83bCdffb17679BfBfDE51Ce6EA5",
+      "txHash": "0x262652b4bab191d0e79b0c62e4cb0fee86ff4579467e520f8144a4953d5c574b",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:40"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "gateway",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IAxelarGateway)541",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:16"
+          },
+          {
+            "label": "gasReceiver",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IAxelarGasService)476",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:17"
+          },
+          {
+            "label": "baseContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:19"
+          },
+          {
+            "label": "baseChain",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IAxelarGasService)476": {
+            "label": "contract IAxelarGasService",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IAxelarGateway)541": {
+            "label": "contract IAxelarGateway",
+            "numberOfBytes": "20"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    },
+    "41003ed1a2e90334efebb5ee920aa514feba0cc17d980f6be37275bef02a1542": {
+      "address": "0x227d34B5BfCf1A9525D727b7573EdFE5C4b3Baff",
+      "txHash": "0x97c62ccb26d6ebfdea3a29ee790382fd7029cabef9702113004a82d3bf1e8429",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:40"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "gateway",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IAxelarGateway)541",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:17"
+          },
+          {
+            "label": "gasReceiver",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IAxelarGasService)476",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:18"
+          },
+          {
+            "label": "baseContract",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:20"
+          },
+          {
+            "label": "baseChain",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_string_storage",
+            "contract": "KClient",
+            "src": "contracts/KClient.sol:21"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IAxelarGasService)476": {
+            "label": "contract IAxelarGasService",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IAxelarGateway)541": {
+            "label": "contract IAxelarGateway",
+            "numberOfBytes": "20"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    }
+  }
+}
