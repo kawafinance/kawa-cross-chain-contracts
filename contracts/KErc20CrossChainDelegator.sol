@@ -21,7 +21,7 @@ contract KErc20CrossChainDelegator is KErc20DelegatorBase, KErc20CrossChainInter
      * @param admin_ Address of the administrator of this token
      * @param implementation_ The address of the implementation the contract delegates to
      * @param becomeImplementationData The encoded args for becomeImplementation
-     * @param messageHub_ The address of the MessageHub
+     * @param centralHub_ The address of the MessageHub
      */
     constructor(
         address underlying_,
@@ -31,7 +31,7 @@ contract KErc20CrossChainDelegator is KErc20DelegatorBase, KErc20CrossChainInter
         string memory name_,
         string memory symbol_,
         uint8 decimals_,
-        address messageHub_,
+        address centralHub_,
         address payable admin_,
         address implementation_,
         bytes memory becomeImplementationData
@@ -51,7 +51,7 @@ contract KErc20CrossChainDelegator is KErc20DelegatorBase, KErc20CrossChainInter
                 name_,
                 symbol_,
                 decimals_,
-                messageHub_
+                centralHub_
             )
         );
 
@@ -192,9 +192,9 @@ contract KErc20CrossChainDelegator is KErc20DelegatorBase, KErc20CrossChainInter
         return abi.decode(data, (uint));
     }
 
-    function _setMessageHub(address newMessageHub) external override {
+    function _setCentralHub(address newCentralHub) external override {
         delegateToImplementation(
-            abi.encodeWithSignature("_setMessageHub(address)", newMessageHub)
+            abi.encodeWithSignature("_setCentralHub(address)", newCentralHub)
         );
     }
 

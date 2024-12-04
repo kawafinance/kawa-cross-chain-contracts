@@ -14,6 +14,9 @@ export type Config = {
   AXELAR_GAS_RECEIVER: string,
   AXELAR_CHAIN_NAME: string,
 
+  WORMHOLE_RELAYER: string,
+  WORMHOLE_CHAIN_ID: number,
+
   WETH_ADDRESS: string
 
   // Comptroller params
@@ -80,9 +83,14 @@ export type Token = {
   // If null, the a chainlink price feed will be deployed.
   priceFeed: string | null
   priceFeedBeta?: string | null
-
-  otherChainMessageHub: string | null,
-  otherChain: string | null,
+  adapters:{
+    axelar:{
+      peerChain: string
+    },
+    wormhole: {
+      peerChain: number
+    }
+  } | null
   collateralFactor: number
   borrowCap: number
 }

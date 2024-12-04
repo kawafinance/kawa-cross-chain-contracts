@@ -887,13 +887,15 @@ task("sendBNB", "send BNB to Client")
             console.log('\x1b[31m%s\x1b[0m', '\n--------> Wrong network <--------\n')
             return;
         }
+
+        const {WORMHOLE_RELAYER} = getConfig(hre.network.name);
         const deployer = (await hre.ethers.getSigners())[0].address;
 
         const kclientAddress = (await hre.deployments.get('kBNBClient')).address;
         const KClient = await hre.ethers.getContractAt('KClient', kclientAddress)
         console.log('Estimating gas...')
-        const kBNBMessageHubAddress = (await hre.deployments.get('kBNBMessageHubClient')).address
-        const kBNBMessageHub = await hre.ethers.getContractAt('MessageHubClient', kBNBMessageHubAddress)
+        const kBNBCentralHubAddress = (await hre.deployments.get('kBNBCentralHub')).address
+        const kBNBCentralHub = await hre.ethers.getContractAt('CentralHub', kBNBCentralHubAddress)
         const amount = '1000000000000000'
         const mintSignature = hre.ethers.utils.keccak256(
             hre.ethers.utils.toUtf8Bytes("mint(address,uint256)")
@@ -904,14 +906,18 @@ task("sendBNB", "send BNB to Client")
             [mintSignature, deployer, amount]
         )
         console.log('payload', payload)
-        let gas = await kBNBMessageHub.gasEstimate(payload, '2000')
-        let gasStatic = await kBNBMessageHub.callStatic.gasEstimate(payload, '2000')
+        const kBNBAdapterWormholeAddress = (await hre.deployments.get('kBNBAdapterWormhole')).address
+        const kBNBAdapterWormhole = await hre.ethers.getContractAt('AdapterWormhole', kBNBAdapterWormholeAddress)
+        let gas = await kBNBCentralHub.calculateGas(payload, '600000')
+        let gasStatic = await kBNBCentralHub.callStatic.calculateGas(payload, '600000')
+        // let gas = await kBNBAdapterWormhole.calculateGas(payload, '2000')
+        // let gasStatic = await kBNBAdapterWormhole.callStatic.calculateGas(payload, '2000')
         console.log('gas\t\t' , gas.toString())
         console.log('gasStatic\t',gasStatic.toString())
-        let result = await KClient.callStatic.mint(amount, {value: ethers.BigNumber.from(gas).add(amount)})
-        console.log(result)
-        // await result.wait(1);
-        // console.log('tx hash: ', result.hash)
+        let result = await KClient.mint(amount, {value: ethers.BigNumber.from(gas).mul(2).add(amount)})
+        // console.log(result)
+        await result.wait(1);
+        console.log('tx hash: ', result.hash)
     });
 
 task("borrowBNB", "borrow BNB")
@@ -936,12 +942,12 @@ task("borrowBNB", "borrow BNB")
         }
         const borrowAmount = '10000000000000'
         console.log('Estimating gas...')
-        const kBNBMessageHubAddress = (await hre.deployments.get('kBNBMessageHub')).address
-        const kBNBMessageHub = await hre.ethers.getContractAt('MessageHub', kBNBMessageHubAddress)
+        const kBNBCentralHubAddress = (await hre.deployments.get('kBNBCentralHub')).address
+        const kBNBCentralHub = await hre.ethers.getContractAt('CentralHub', kBNBCentralHubAddress)
 
         const payload = hre.ethers.utils.defaultAbiCoder.encode(["address", "uint256"], [deployer, borrowAmount]);
-        let gas = await kBNBMessageHub.gasEstimate(payload, '2000')
-        let gasStatic = await kBNBMessageHub.callStatic.gasEstimate(payload, '2000')
+        let gas = await kBNBCentralHub.calculateGas(payload, '600000')
+        let gasStatic = await kBNBCentralHub.callStatic.calculateGas(payload, '600000')
         console.log('gas\t\t' , gas.toString())
         console.log('gasStatic\t',gasStatic.toString())
         console.log('payload', payload)
@@ -965,8 +971,8 @@ task("repayBNB", "repay BNB")
         const bnb = TOKENS.find(t => t.symbol == "BNB");
         const borrowAmount = '1000000000000'
         console.log('Estimating gas...')
-        const kBNBMessageHubAddress = (await hre.deployments.get('kBNBMessageHubClient')).address
-        const kBNBMessageHub = await hre.ethers.getContractAt('MessageHubClient', kBNBMessageHubAddress)
+        const kBNBCentralHubAddress = (await hre.deployments.get('kBNBCentralHub')).address
+        const kBNBCentralHub = await hre.ethers.getContractAt('CentralHub', kBNBCentralHubAddress)
         const repayBorrowBehalfSignature = hre.ethers.utils.keccak256(
             hre.ethers.utils.toUtf8Bytes("repayBorrowBehalf(address,address,uint256)")
         ).slice(0, 10);
@@ -975,13 +981,13 @@ task("repayBNB", "repay BNB")
             ['bytes4', 'address', 'address', 'uint256'],
             [repayBorrowBehalfSignature, deployer, deployer, borrowAmount])
         console.log('payload', payload)
-        let gas = await kBNBMessageHub.gasEstimate(payload, '2000')
-        let gasStatic = await kBNBMessageHub.callStatic.gasEstimate(payload, '2000')
+        let gas = await kBNBCentralHub.calculateGas(payload, '2000')
+        let gasStatic = await kBNBCentralHub.callStatic.calculateGas(payload, '2000')
         console.log('gas\t\t' , gas.toString())
         console.log('gasStatic\t',gasStatic.toString())
         const kBNBClientAddress = (await hre.deployments.get('kBNBClient')).address
         const KClient = await hre.ethers.getContractAt('KClient', kBNBClientAddress)
-        let result = await KClient.repayBorrow(borrowAmount, {value: ethers.BigNumber.from(gas).mul(2).add(borrowAmount)})
+        let result = await KClient.repayBorrow(borrowAmount, {value: ethers.BigNumber.from(gas).add(borrowAmount)})
         // console.log(result)
         await result.wait(1);
         console.log('tx hash: ', result.hash)
@@ -999,9 +1005,9 @@ task("redeemBNB", "redeem BNB")
         const borrowAmount = '1000000000000'
 
         console.log('Estimating gas...')
-        const kBNBMessageHubAddress = (await hre.deployments.get('kBNBMessageHub')).address
-        const kBNBMessageHub = await hre.ethers.getContractAt('MessageHub', kBNBMessageHubAddress)
-        let gas = await kBNBMessageHub.gasEstimate(deployer, borrowAmount, '1000')
+        const kBNBCentralHubAddress = (await hre.deployments.get('kBNBCentralHub')).address
+        const kBNBCentralHub = await hre.ethers.getContractAt('CentralHub', kBNBCentralHubAddress)
+        let gas = await kBNBCentralHub.calculateGas(deployer, borrowAmount, '1000')
 
         console.log('Redeeming BNB...')
         const kBNB = await hre.ethers.getContractAt('KErc20CrossChainDelegator', kBNBAddress)
@@ -1125,16 +1131,16 @@ task("replayMsgSepolia", "replay msg to message hub sepolia")
         const sourceChain = 'binance'
         const sourceAddress = '0xE82fDEE72c6B7F729c66c281f2CDf33b0B2CF23f'
         const payload ='0x40c10f19000000000000000000000000000000000000000000000000000000000000000000000000000000006027862a465ef7d842e32a8a16a39d4d83c25d3a00000000000000000000000000000000000000000000000000005af3107a4000'
-        const kBNBMessageHubAddress = (await hre.deployments.get('kBNBMessageHub')).address
-        const kBNBMessageHub = await hre.ethers.getContractAt('MessageHub', kBNBMessageHubAddress)
-        result = await kBNBMessageHub.estimateGas.execute(
+        const kBNBCentralHubAddress = (await hre.deployments.get('kBNBCentralHub')).address
+        const kBNBCentralHub = await hre.ethers.getContractAt('CentralHub', kBNBCentralHubAddress)
+        result = await kBNBCentralHub.estimateGas.execute(
             commandId,
             sourceChain,
             sourceAddress,
             payload
         )
         console.log(result)
-        result = await kBNBMessageHub.callStatic.execute(
+        result = await kBNBCentralHub.callStatic.execute(
             commandId,
             sourceChain,
             sourceAddress,
@@ -1142,7 +1148,7 @@ task("replayMsgSepolia", "replay msg to message hub sepolia")
         )
         console.log(result)
 
-        // result = await kBNBMessageHub.execute(
+        // result = await kBNBCentralHub.execute(
         //     commandId,
         //     sourceChain,
         //     sourceAddress,
@@ -1190,9 +1196,9 @@ task("replayMsgBsc", "replay msg to client bsc")
 task("gasEst", "estimate gas to send axelar msg")
     .setAction(async ({}, hre) => {
         const deployer = (await hre.ethers.getSigners())[0].address;
-        const kBNBMessageHubAddress = (await hre.deployments.get('kBNBMessageHub')).address
-        const kBNBMessageHub = await hre.ethers.getContractAt('MessageHub', kBNBMessageHubAddress)
-        let result = await kBNBMessageHub.gasEstimate(deployer, '10000000000000', '1000')
+        const kBNBCentralHubAddress = (await hre.deployments.get('kBNBCentralHub')).address
+        const kBNBCentralHub = await hre.ethers.getContractAt('CentralHub', kBNBCentralHubAddress)
+        let result = await kBNBCentralHub.calculateGas(deployer, '10000000000000', '1000')
         console.log(result)
     });
 

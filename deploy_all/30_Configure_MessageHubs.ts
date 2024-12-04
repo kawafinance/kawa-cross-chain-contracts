@@ -1,25 +1,7 @@
-import * as ethers from "ethers";
 import {HardhatRuntimeEnvironment} from "hardhat/types";
-import {readFileSync} from "fs";
 import {getConfig} from '../config'
-import path from "path";
+import {getDeploymentAddress} from "./utils_func";
 
-function getDeploymentAddress(networkName, contractName) {
-    try {
-        // Construct the path to the deployment file
-        const deploymentPath = path.resolve(
-            process.cwd(),
-            `deployments/${networkName}/${contractName}.json`
-        );
-
-        // Read and parse the deployment file
-        const deploymentData = JSON.parse(readFileSync(deploymentPath, "utf-8"));
-        return deploymentData.address;
-    } catch (error) {
-        // Return the zero address if deployment data is not found
-        return "0x0000000000000000000000000000000000000000";
-    }
-}
 
 const func = async function (hre: HardhatRuntimeEnvironment) {
 
@@ -27,33 +9,89 @@ const func = async function (hre: HardhatRuntimeEnvironment) {
     const {TOKENS} = getConfig(hre.network.name);
     const tokens = TOKENS.filter(r => r.symbol !== NATIVE_SYMBOL)
 
+    let contractName
+    let contractAddress
+    let contract
+    let argAddress
     let result
-
-    const otherClientTag = hre.network.name === 'sepolia' ? 'Client' : ''
+    let checkAddress
+    const otherChain = hre.network.name === 'sepolia'
+        ? 'bnbTestnet'
+        : 'sepolia'
     const clientTag = hre.network.name === 'sepolia' ? '' : 'Client'
 
     for (const token of tokens) {
-        const otherChain = token.otherChain === 'binance'
-            ? 'bnbTestnet'
-            : token.otherChain === 'ethereum-sepolia'
-                ? 'sepolia'
-                : token.otherChain
 
-        let clientContractAddress = getDeploymentAddress(otherChain, token.kToken.symbol + "MessageHub" + otherClientTag);
-        if (clientContractAddress !== '') {
-            console.log(`Configuring ${token.kToken.symbol}MessageHub${clientTag} for ${token.kToken.name}...\n`);
-            const messageHubAddress = (await hre.deployments.get(token.kToken.symbol + "MessageHub" + clientTag)).address;
-            const MessageHubContract = await hre.ethers.getContractAt("MessageHubClient", messageHubAddress)
-            result = await MessageHubContract._setClientContract(token.otherChainMessageHub);
-            await result.wait(1);
-        } else {
-            console.log(token.kToken.symbol, "OtherChainContract not found.");
+        const tokenContractName = token.kToken.symbol + clientTag
+        const centralHubContractName = token.kToken.symbol + 'CentralHub'
+
+        console.log(`Configuring ${tokenContractName} Messaging Hubs...`);
+
+        let tokenContractAddress
+        try {
+            tokenContractAddress = (await hre.deployments.get(tokenContractName)).address;
+        } catch (e) {
+            console.log('tokenContract address not found.');
         }
 
+        let centralHubContractAddress
+        try {
+            centralHubContractAddress = (await hre.deployments.get(centralHubContractName)).address;
+        } catch (e) {
+            console.log('centralHubContract address not found.');
+        }
+
+        if(tokenContractAddress && centralHubContractAddress) {
+
+            contract = await hre.ethers.getContractAt(
+                hre.network.name === 'sepolia'
+                    ? 'KErc20CrossChainDelegator'
+                    : 'KClientDelegator',
+                tokenContractAddress
+            )
+            checkAddress = await contract.centralHub()
+            if(checkAddress !== centralHubContractAddress) {
+                console.log(`Configuring ${tokenContractName}... ${centralHubContractAddress}`);
+                result = await contract._setCentralHub(centralHubContractAddress)
+                await result.wait(1);
+            }
+
+            contract = await hre.ethers.getContractAt("CentralHub", centralHubContractAddress)
+            checkAddress = await contract.kToken()
+            if(checkAddress !== tokenContractAddress) {
+                console.log(`Configuring ${centralHubContractName}... ${tokenContractAddress}`);
+                result = await contract._setKToken(tokenContractAddress)
+                await result.wait(1);
+            }
+        }
+
+        contractName = token.kToken.symbol + 'AdapterAxelar'
+        console.log(`Configuring ${contractName}...`);
+        argAddress = getDeploymentAddress(otherChain, contractName);
+        if (argAddress !== "0x0000000000000000000000000000000000000000") {
+            contractAddress = (await hre.deployments.get(token.kToken.symbol + "AdapterAxelar")).address;
+            contract = await hre.ethers.getContractAt("AdapterAxelar", contractAddress)
+            result = await contract._setPeerContract(argAddress)
+            await result.wait(1);
+        } else {
+            console.log('Peer address not found.');
+        }
+
+        contractName = token.kToken.symbol + 'AdapterWormhole'
+        console.log(`Configuring ${contractName}...`);
+        argAddress = getDeploymentAddress(otherChain, contractName);
+        if (argAddress !== "0x0000000000000000000000000000000000000000") {
+            contractAddress = (await hre.deployments.get(contractName)).address;
+            contract = await hre.ethers.getContractAt("AdapterWormhole", contractAddress)
+            result = await contract._setPeerContract(
+                hre.ethers.utils.hexZeroPad(argAddress, 32)
+            )
+            await result.wait(1);
+        } else {
+            console.log('Peer address not found.');
+        }
     }
 
 }
 
 export default func
-
-

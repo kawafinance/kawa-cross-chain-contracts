@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./WErc20.sol";
 import "./KErc20Base.sol";
 import "./KTokenInterfaces.sol";
-import "./MessageHub/MessageHubInterfaces.sol";
+import "./CentralHub/MessageInterfaces.sol";
 
 /**
  * @title Kawa's KErc20.sol Contract
@@ -23,7 +23,7 @@ contract KErc20CrossChain is KErc20Base, KErc20CrossChainInterface {
      * @param name_ ERC-20 name of this token
      * @param symbol_ ERC-20 symbol of this token
      * @param decimals_ ERC-20 decimal precision of this token
-     * @param messageHub_ The address of the MessageHub
+     * @param centralHub_ The address of the MessageHub
      */
     function initialize(
         address underlying_,
@@ -33,7 +33,7 @@ contract KErc20CrossChain is KErc20Base, KErc20CrossChainInterface {
         string memory name_,
         string memory symbol_,
         uint8 decimals_,
-        address messageHub_
+        address centralHub_
     ) public {
         // KToken initialize does the bulk of the work
         super.initialize(
@@ -45,7 +45,7 @@ contract KErc20CrossChain is KErc20Base, KErc20CrossChainInterface {
             decimals_
         );
 
-        messageHub = messageHub_;
+        centralHub = centralHub_;
 
         // Set underlying and sanity check it
         underlying = underlying_;
@@ -65,7 +65,7 @@ contract KErc20CrossChain is KErc20Base, KErc20CrossChainInterface {
         address minter,
         uint mintAmount
     ) external override returns (uint) {
-        require(msg.sender == messageHub, "Unauthorized");
+        require(msg.sender == centralHub, "Unauthorized");
         (uint err,) = mintInternal(
             minter,
             mintAmount
@@ -83,7 +83,7 @@ contract KErc20CrossChain is KErc20Base, KErc20CrossChainInterface {
         address payer,
         uint repayAmount
     ) external override returns (uint) {
-        require(msg.sender == messageHub, "Unauthorized");
+        require(msg.sender == centralHub, "Unauthorized");
         (uint err,) = repayBorrowInternal(
             payer,
             repayAmount);
@@ -102,7 +102,7 @@ contract KErc20CrossChain is KErc20Base, KErc20CrossChainInterface {
         address borrower,
         uint repayAmount
     ) external override returns (uint) {
-        require(msg.sender == messageHub, "Unauthorized");
+        require(msg.sender == centralHub, "Unauthorized");
         (uint err,) = repayBorrowBehalfInternal(
             payer,
             borrower,
@@ -126,7 +126,7 @@ contract KErc20CrossChain is KErc20Base, KErc20CrossChainInterface {
         uint repayAmount,
         KTokenInterface kTokenCollateral
     ) external override returns (uint) {
-        require(msg.sender == messageHub, "Unauthorized");
+        require(msg.sender == centralHub, "Unauthorized");
         (uint err,) = liquidateBorrowInternal(
             liquidator,
             borrower,
@@ -378,20 +378,26 @@ contract KErc20CrossChain is KErc20Base, KErc20CrossChainInterface {
             }
         }
         require(success, "TOKEN_TRANSFER_OUT_FAILED");
-        MessageHubInterfaces(messageHub).sendMessage{value: msg.value}(msg.sender,to, amount);
+
+        bytes memory payload = abi.encode(
+            KClientInterface.releaseETH.selector,
+            msg.sender,
+            amount
+        );
+        MessageInterface(centralHub).sendMessage{value: msg.value}(msg.sender,payload);
     }
 
     /*** Admin Functions ***/
 
-    function _setMessageHub(address newMessageHub) external override {
+    function _setCentralHub(address newCentralHub) external override {
         require(msg.sender == admin, "Unauthorized");
 
-        address oldMessageHub = messageHub;
-        messageHub = newMessageHub;
+        address oldCentralHub = centralHub;
+        centralHub = newCentralHub;
 
-        emit NewMessageHub(
-            oldMessageHub,
-            messageHub
+        emit NewCentralHub(
+            oldCentralHub,
+            centralHub
         );
     }
 }

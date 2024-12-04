@@ -1,7 +1,6 @@
 import {task} from "hardhat/config";
 import {getConfig} from "../config";
 
-
 task("configOracle", "config oracle")
     .setAction(async (taskArgs, hre) => {
 

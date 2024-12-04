@@ -54,7 +54,7 @@ const config: any = {
     },
     sepolia: {
       chainId: 11155111,
-      url: "https://rpc.sepolia.org", //https://rpc.ankr.com/eth_sepolia  https://ethereum-sepolia.publicnode.com https://sepolia.rpc.thirdweb.com
+      url: "https://ethereum-sepolia.publicnode.com", //https://rpc.ankr.com/eth_sepolia  https://ethereum-sepolia.publicnode.com https://sepolia.rpc.thirdweb.com https://rpc.sepolia.org
       accounts: accountsTestnet
     },
     bnbTestnet: {

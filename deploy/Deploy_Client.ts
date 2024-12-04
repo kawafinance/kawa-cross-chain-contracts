@@ -8,8 +8,9 @@ const func = async function (hre: HardhatRuntimeEnvironment) {
     }
 
     const deploy_allScripts = [
-        "../deploy_all/20_Deploy_KClientDelegate.ts",
-        "../deploy_all/21_Deploy_KClient.ts",
+        "../deploy_all/00_Deploy_MessageHubs.ts",
+        // "../deploy_all/20_Deploy_KClientDelegate.ts",
+        // "../deploy_all/21_Deploy_KClient.ts",
         "../deploy_all/30_Configure_MessageHubs.ts",
     ];
 

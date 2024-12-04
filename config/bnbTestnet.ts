@@ -17,6 +17,9 @@ export const config: Config = {
   AXELAR_GATEWAY: "0x4D147dCb984e6affEEC47e44293DA442580A3Ec0",
   AXELAR_GAS_RECEIVER: "0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6",
   AXELAR_CHAIN_NAME: "binance",
+
+  WORMHOLE_RELAYER: "0x80aC94316391752A193C1c47E27D382b507c93F3",
+  WORMHOLE_CHAIN_ID: 4,
   
   WETH_ADDRESS: "",
 
@@ -35,8 +38,14 @@ export const config: Config = {
         seizeShare: 3,
         address: null
       },
-      otherChainMessageHub: "0xFEaaaf812e5BB9488eA9Ba48818F6b4b46e61993",
-      otherChain: "ethereum-sepolia",
+      adapters: {
+        axelar:{
+          peerChain: "ethereum-sepolia"
+        },
+        wormhole: {
+          peerChain: 10002
+        }
+      },
       collateralFactor: 70,
       borrowCap: 1
     }
