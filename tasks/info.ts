@@ -22,6 +22,13 @@ function getDeploymentAddress(networkName, contractName) {
         return "0x000000000000000000000000000000000000dead";
     }
 }
+function getRelatedToken(artifact: string){
+    if(artifact.startsWith('k')){
+        return artifact.substring(1, 4);
+    }else {
+        return artifact.substring(0, 3)
+    }
+}
 
 const printCheckValue = (label: string, contractAddress: any, wantedAddress: any) => {
     if (contractAddress !== wantedAddress) {
@@ -66,6 +73,8 @@ const formatTime = (seconds: any) => {
 
 task("contractsInfo", "get all protocol info")
     .setAction(async (taskArgs, hre) => {
+        const NATIVE_SYMBOL = 'SEI'
+        const NATIVE_K_SYMBOL = 'k'+NATIVE_SYMBOL
 
         console.log('')
 
@@ -80,66 +89,94 @@ task("contractsInfo", "get all protocol info")
         }
         const artifacts = filenames.filter(filename => filename.endsWith('.json')).map(filename => path.parse(filename).name);
 
-        const otherNetwork = hre.network.name === 'sepolia'
-            ? 'bnbTestnet'
-            : 'sepolia'
-
         const {
             AXELAR_GATEWAY,
             AXELAR_GAS_RECEIVER,
             WORMHOLE_RELAYER,
-            WORMHOLE_CHAIN_ID
+            WORMHOLE_CHAIN_ID,
+            TOKENS
         } = getConfig(hre.network.name);
 
-        const {
-            WORMHOLE_CHAIN_ID: OTHER_WORMHOLE_CHAIN_ID
-        } = getConfig(otherNetwork);
+        const tokenSymbols = TOKENS.map(token => token.symbol)
 
-        const printAdapterAxelar = async (artifact: string, artifactAddress: string) => {
-            const Adapter = await hre.ethers.getContractAt('AdapterAxelar', artifactAddress)
-            const endOfSymbol = artifact.indexOf("AdapterAxelar");
-            const adapterSymbol = artifact.slice(0, endOfSymbol);
-            const adapterCentralHubWant = (await hre.deployments.get(adapterSymbol + "CentralHub")).address
+        const printAdapterBase = async (Adapter: any, adapterSymbol: string) => {
+            const adapterCentralHubWant = (await hre.deployments.get('k' + adapterSymbol + "CentralHub")).address
             const adaptercentralHub = await Adapter.centralHub()
             printCheckAddress('\tcentralHub:\t\t', adaptercentralHub, adapterCentralHubWant)
+        }
+
+        const printAdapter = async (artifact: string, artifactAddress: string) => {
+            if (artifact.includes('Axelar')) {
+                await printAdapterAxelar(artifact, artifactAddress)
+            } else if (artifact.includes('Wormhole')) {
+                await printAdapterWormhole(artifact, artifactAddress)
+            } else if (artifact.includes('LayerZero')) {
+                await printAdapterLayerZero(artifact, artifactAddress)
+            }
+        }
+
+        const printAdapterAxelar = async (artifact: string, artifactAddress: string) => {
+            const adapterSymbol = getRelatedToken(artifact)
+            const token = TOKENS.find(t => t.symbol === adapterSymbol)
+            const Adapter = await hre.ethers.getContractAt('AdapterAxelar', artifactAddress)
+            await printAdapterBase(Adapter, adapterSymbol)
             const adaptergateway = await Adapter.gateway()
             printCheckAddress('\tgateway:\t\t', adaptergateway, AXELAR_GATEWAY)
             const adaptergasReceiver = await Adapter.gasReceiver()
             printCheckAddress('\tgasReceiver:\t\t', adaptergasReceiver, AXELAR_GAS_RECEIVER)
             const adapterPeerContract = await Adapter.peerContract()
-            const adapterPeerContractWant = getDeploymentAddress(otherNetwork, artifact)
+            const adapterPeerContractWant = getDeploymentAddress(token?.peerChain, artifact)
             printCheckAddress('\tPeerContract:\t\t', adapterPeerContract, adapterPeerContractWant)
             const messageHubpeerChain = await Adapter.peerChain()
             console.log('\tpeerChain:\t\t', messageHubpeerChain)
         }
 
         const printAdapterWormhole = async (artifact: string, artifactAddress: string) => {
+            const adapterSymbol = getRelatedToken(artifact)
+            const token = TOKENS.find(t => t.symbol === adapterSymbol)
             const Adapter = await hre.ethers.getContractAt('AdapterWormhole', artifactAddress)
-            const endOfSymbol = artifact.indexOf("AdapterWormhole");
-            const adapterSymbol = artifact.slice(0, endOfSymbol);
-            const adapterCentralHubWant = (await hre.deployments.get(adapterSymbol + "CentralHub")).address
-            const adaptercentralHub = await Adapter.centralHub()
-            printCheckAddress('\tcentralHub:\t\t', adaptercentralHub, adapterCentralHubWant)
+            await printAdapterBase(Adapter, adapterSymbol)
             const adapterwormholeRelayer = await Adapter.wormholeRelayer()
             printCheckAddress('\twormholeRelayer:\t', adapterwormholeRelayer, WORMHOLE_RELAYER)
             const adapterPeerContract = await Adapter.peerContract()
-            const adapterPeerContractWant = getDeploymentAddress(otherNetwork, artifact)
+            const adapterPeerContractWant = getDeploymentAddress(token?.peerChain, artifact)
             printCheckAddress('\tPeerContract:\t\t', adapterPeerContract, hre.ethers.utils.hexZeroPad(adapterPeerContractWant, 32))
             const adapterPeerContractAddr = await Adapter.getPeerContract()
             printCheckAddress('\tPeerContract:\t\t', adapterPeerContractAddr, adapterPeerContractWant)
             const adapterpeerChain = await Adapter.peerChain()
+            const {WORMHOLE_CHAIN_ID: OTHER_WORMHOLE_CHAIN_ID} = getConfig(token?.peerChain!)
             printCheckValue('\tpeerChain:\t\t', adapterpeerChain, OTHER_WORMHOLE_CHAIN_ID)
             const adapterthisChain = await Adapter.thisChain()
             printCheckValue('\tthisChain:\t\t', adapterthisChain, WORMHOLE_CHAIN_ID)
         }
 
-        if (hre.network.name === 'sepolia') {
+        const printAdapterLayerZero = async (artifact: string, artifactAddress: string) => {
+            const adapterSymbol = getRelatedToken(artifact)
+            const token = TOKENS.find(t => t.symbol === adapterSymbol)
+            const Adapter = await hre.ethers.getContractAt('AdapterLayerZero', artifactAddress)
+            await printAdapterBase(Adapter, adapterSymbol)
+            const adapterPeerContract = await Adapter.peerContract()
+            const adapterPeerContractWant = getDeploymentAddress(token?.peerChain, artifact)
+            printCheckAddress('\tPeerContract:\t\t', adapterPeerContract, hre.ethers.utils.hexZeroPad(adapterPeerContractWant, 32))
+            const adapterpeerChain = await Adapter.peerChain()
+            const {LAYERZERO_CHAINID: OTHER_LAYERZERO_CHAINID} = getConfig(token?.peerChain!)
+            printCheckValue('\tpeerChain:\t\t', adapterpeerChain, OTHER_LAYERZERO_CHAINID)
+        }
+
+        const printToken = async (artifact: string, artifactAddress: string) => {
+            const token = await hre.ethers.getContractAt('WErc20', artifactAddress)
+            const owner = await token.owner()
+            const wantedOwner =  (await hre.deployments.get('k' + artifact)).address
+            printCheckAddress('\towner:\t\t\t', owner, wantedOwner)
+        }
+
+        if (hre.network.name === hre.userConfig.defaultNetwork) {
             const UNITROLLER_ADDRESS = (await hre.deployments.get('Unitroller')).address
             const PYTH_ORACLE_ADDRESS = (await hre.deployments.get('PythOracle')).address
             const JUMP_RATE_MODEL_ADDRESS = (await hre.deployments.get('JumpRateModel')).address
             const KWETH_DELEGATE_ADDRESS = (await hre.deployments.get('KWethDelegate')).address
             const KERC20_CROSSCHAIN_DELEGATE_ADDRESS = (await hre.deployments.get('KErc20CrossChainDelegate')).address
-            const KETH_ADDRESS = (await hre.deployments.get('kETH')).address
+            const KETH_ADDRESS = (await hre.deployments.get(NATIVE_K_SYMBOL)).address
 
             const printKToken = async (kTokenAddress: any) => {
                 const KErc20Delegator = await hre.ethers.getContractAt('KErc20CrossChainDelegator', kTokenAddress)
@@ -151,10 +188,10 @@ task("contractsInfo", "get all protocol info")
                 console.log('\tdecimals:\t\t', decimals)
                 const comptroller = await KErc20Delegator.comptroller()
                 printCheckAddress('\tcomptroller:\t\t', comptroller, UNITROLLER_ADDRESS)
-                const underlying = symbol == 'kSEI' ? '' : await KErc20Delegator.underlying()
+                const underlying = await KErc20Delegator.underlying()
                 console.log('\tunderlying:\t\t', underlying)
                 const implementation = await KErc20Delegator.implementation()
-                printCheckAddress('\timplementation:\t\t', implementation, symbol === 'kETH' ? KWETH_DELEGATE_ADDRESS : KERC20_CROSSCHAIN_DELEGATE_ADDRESS)
+                printCheckAddress('\timplementation:\t\t', implementation, symbol === NATIVE_K_SYMBOL ? KWETH_DELEGATE_ADDRESS : KERC20_CROSSCHAIN_DELEGATE_ADDRESS)
                 // const incentivesControllerAddress = await KErc20Delegator.incentivesController()
                 const interestRateModel = await KErc20Delegator.interestRateModel()
                 printCheckAddress('\tinterestRateModel:\t', interestRateModel, JUMP_RATE_MODEL_ADDRESS)
@@ -194,19 +231,8 @@ task("contractsInfo", "get all protocol info")
                         const centralHubImplKToken = (await hre.deployments.get(centralHubSymbol)).address
                         const centralHubKToken = await CentralHub.kToken()
                         printCheckAddress('\tkToken:\t\t\t', centralHubKToken, centralHubImplKToken)
-                        // const messageHubgateway = await CentralHub.gateway()
-                        // printCheckAddress('\tgateway:\t\t', messageHubgateway, AXELAR_GATEWAY)
-                        // const messageHubgasReceiver = await CentralHub.gasReceiver()
-                        // printCheckAddress('\tgasReceiver:\t\t', messageHubgasReceiver, AXELAR_GAS_RECEIVER)
-                        // const messageHubclientContract = await CentralHub.clientContract()
-                        // const messageHubOtherContract = getDeploymentAddress(otherNetwork, artifact + 'Client')
-                        // printCheckAddress('\tclientContract:\t\t', messageHubclientContract, messageHubOtherContract)
-                        // const messageHubclientChain = await CentralHub.clientChain()
-                        // console.log('\tclientChain:\t\t', messageHubclientChain)
-                    } else if (artifact.includes('AdapterAxelar')) {
-                        await printAdapterAxelar(artifact, artifactAddress)
-                    } else if (artifact.includes('AdapterWormhole')) {
-                        await printAdapterWormhole(artifact, artifactAddress)
+                    } else if (artifact.includes('Adapter')) {
+                        await printAdapter(artifact, artifactAddress)
                     } else {
                         await printKToken(artifactAddress)
                         const borrowCap = await comptroller.borrowCaps(artifactAddress)
@@ -239,19 +265,19 @@ task("contractsInfo", "get all protocol info")
                 } else if (artifact === 'WETHRouter') {
                     const WETHRouter = await hre.ethers.getContractAt('WETHRouter', artifactAddress)
                     const WETHRouterKToken = await WETHRouter.kToken()
-                    printCheckAddress('\tkToken:\t\t', WETHRouterKToken, KETH_ADDRESS)
+                    printCheckAddress('\tkToken:\t\t\t', WETHRouterKToken, KETH_ADDRESS)
                     const WETHRouterweth = await WETHRouter.weth()
-                    console.log('\tweth:\t\t', WETHRouterweth)
+                    console.log('\tweth:\t\t\t', WETHRouterweth)
+                } else if (tokenSymbols.includes(artifact)){
+                    await printToken(artifact, artifactAddress)
                 }
             }
         } else {
             for (const artifact of artifacts) {
                 const artifactAddress = (await hre.deployments.get(artifact)).address
                 printAddress(artifact, artifactAddress)
-                if (artifact.includes('AdapterAxelar')) {
-                    await printAdapterAxelar(artifact, artifactAddress)
-                } else if (artifact.includes('AdapterWormhole')) {
-                    await printAdapterWormhole(artifact, artifactAddress)
+                if (artifact.includes('Adapter')) {
+                    await printAdapter(artifact, artifactAddress)
                 } else if (artifact.includes('Client') && !artifact.includes('Delegate')) {
                     const KClientDelegator = await hre.ethers.getContractAt('KClientDelegator', artifactAddress)
                     const endOfSymbol = artifact.indexOf("Client");
@@ -267,30 +293,6 @@ task("contractsInfo", "get all protocol info")
         }
         console.log('')
     });
-
-task("clientInfo", "get client info")
-    .setAction(async (taskArgs, hre) => {
-
-        const {
-            AXELAR_GATEWAY,
-            AXELAR_GAS_RECEIVER
-        } = getConfig(hre.network.name);
-
-        console.log('')
-        const bnbClientAddress = "0xd67219296b51788b26e0162d4037a643fd35986d"
-        const KClient = await hre.ethers.getContractAt('KClient', bnbClientAddress)
-        printAddress('KClient', bnbClientAddress)
-        const baseContract = await KClient.callStatic.baseContract()
-        printAddress('\tbaseContract\t\t', baseContract)
-        const baseChain = await KClient.callStatic.baseChain()
-        printAddress('\tbaseChain\t\t', baseChain)
-        const gateway = await KClient.callStatic.gateway()
-        printCheckAddress('\tgateway\t\t', gateway, AXELAR_GATEWAY)
-        const gasReceiver = await KClient.callStatic.gasReceiver()
-        printCheckAddress('\tgasReceiver\t\t', gasReceiver, AXELAR_GAS_RECEIVER)
-        console.log('')
-    });
-
 
 task("oracleInfo", "get oracle info")
     .setAction(async (taskArgs, hre) => {

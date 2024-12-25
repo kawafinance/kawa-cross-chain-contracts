@@ -880,249 +880,9 @@ task("configCompBNB", "config comptroller")
     })
 
 
-task("sendBNB", "send BNB to Client")
-    .setAction(async ({}, hre) => {
-
-        if (hre.network.name !== 'bnbTestnet') {
-            console.log('\x1b[31m%s\x1b[0m', '\n--------> Wrong network <--------\n')
-            return;
-        }
-
-        const {WORMHOLE_RELAYER} = getConfig(hre.network.name);
-        const deployer = (await hre.ethers.getSigners())[0].address;
-
-        const kclientAddress = (await hre.deployments.get('kBNBClient')).address;
-        const KClient = await hre.ethers.getContractAt('KClient', kclientAddress)
-        console.log('Estimating gas...')
-        const kBNBCentralHubAddress = (await hre.deployments.get('kBNBCentralHub')).address
-        const kBNBCentralHub = await hre.ethers.getContractAt('CentralHub', kBNBCentralHubAddress)
-        const amount = '1000000000000000'
-        const mintSignature = hre.ethers.utils.keccak256(
-            hre.ethers.utils.toUtf8Bytes("mint(address,uint256)")
-        ).slice(0, 10);
-        console.log(mintSignature)
-        const payload = hre.ethers.utils.defaultAbiCoder.encode(
-            ['bytes4', 'address', 'uint256'],
-            [mintSignature, deployer, amount]
-        )
-        console.log('payload', payload)
-        const kBNBAdapterWormholeAddress = (await hre.deployments.get('kBNBAdapterWormhole')).address
-        const kBNBAdapterWormhole = await hre.ethers.getContractAt('AdapterWormhole', kBNBAdapterWormholeAddress)
-        let gas = await kBNBCentralHub.calculateGas(payload, '600000')
-        let gasStatic = await kBNBCentralHub.callStatic.calculateGas(payload, '600000')
-        // let gas = await kBNBAdapterWormhole.calculateGas(payload, '2000')
-        // let gasStatic = await kBNBAdapterWormhole.callStatic.calculateGas(payload, '2000')
-        console.log('gas\t\t' , gas.toString())
-        console.log('gasStatic\t',gasStatic.toString())
-        let result = await KClient.mint(amount, {value: ethers.BigNumber.from(gas).mul(2).add(amount)})
-        // console.log(result)
-        await result.wait(1);
-        console.log('tx hash: ', result.hash)
-    });
-
-task("borrowBNB", "borrow BNB")
-    .setAction(async ({}, hre) => {
-        if (hre.network.name !== 'sepolia') {
-            console.log('\x1b[31m%s\x1b[0m', '\n--------> Wrong network <--------\n')
-            return;
-        }
-        const deployer = (await hre.ethers.getSigners())[0].address;
-        let result
-        const kBNBAddress = (await hre.deployments.get('kBNB')).address
-
-        const unitrollerAddress = (await hre.deployments.get('Unitroller')).address
-        const Comptroller = await hre.ethers.getContractAt('Comptroller', unitrollerAddress)
-        const currentAssetsIn = await Comptroller.getAssetsIn(deployer)
-        if (!currentAssetsIn.includes(kBNBAddress)) {
-            console.log('Enabling collateral...')
-            result = await Comptroller.enterMarkets([kBNBAddress])
-            await result.wait(1)
-        } else {
-            console.log('Collateral already enabled.')
-        }
-        const borrowAmount = '10000000000000'
-        console.log('Estimating gas...')
-        const kBNBCentralHubAddress = (await hre.deployments.get('kBNBCentralHub')).address
-        const kBNBCentralHub = await hre.ethers.getContractAt('CentralHub', kBNBCentralHubAddress)
-
-        const payload = hre.ethers.utils.defaultAbiCoder.encode(["address", "uint256"], [deployer, borrowAmount]);
-        let gas = await kBNBCentralHub.calculateGas(payload, '600000')
-        let gasStatic = await kBNBCentralHub.callStatic.calculateGas(payload, '600000')
-        console.log('gas\t\t' , gas.toString())
-        console.log('gasStatic\t',gasStatic.toString())
-        console.log('payload', payload)
-        console.log('Borrowing BNB...')
-        const kBNB = await hre.ethers.getContractAt('KErc20CrossChainDelegator', kBNBAddress)
-        result = await kBNB.borrow(borrowAmount, {value: ethers.BigNumber.from(gas)})
-        // console.log(result)
-        await result.wait(1);
-        console.log('tx hash: ', result.hash)
-    });
-
-task("repayBNB", "repay BNB")
-    .setAction(async ({}, hre) => {
-        if (hre.network.name !== 'bnbTestnet') {
-            console.log('\x1b[31m%s\x1b[0m', '\n--------> Wrong network <--------\n')
-            return;
-        }
-
-        const deployer = (await hre.ethers.getSigners())[0].address;
-        const {TOKENS} = getConfig(hre.network.name);
-        const bnb = TOKENS.find(t => t.symbol == "BNB");
-        const borrowAmount = '1000000000000'
-        console.log('Estimating gas...')
-        const kBNBCentralHubAddress = (await hre.deployments.get('kBNBCentralHub')).address
-        const kBNBCentralHub = await hre.ethers.getContractAt('CentralHub', kBNBCentralHubAddress)
-        const repayBorrowBehalfSignature = hre.ethers.utils.keccak256(
-            hre.ethers.utils.toUtf8Bytes("repayBorrowBehalf(address,address,uint256)")
-        ).slice(0, 10);
-        console.log(repayBorrowBehalfSignature)
-        const payload = hre.ethers.utils.defaultAbiCoder.encode(
-            ['bytes4', 'address', 'address', 'uint256'],
-            [repayBorrowBehalfSignature, deployer, deployer, borrowAmount])
-        console.log('payload', payload)
-        let gas = await kBNBCentralHub.calculateGas(payload, '2000')
-        let gasStatic = await kBNBCentralHub.callStatic.calculateGas(payload, '2000')
-        console.log('gas\t\t' , gas.toString())
-        console.log('gasStatic\t',gasStatic.toString())
-        const kBNBClientAddress = (await hre.deployments.get('kBNBClient')).address
-        const KClient = await hre.ethers.getContractAt('KClient', kBNBClientAddress)
-        let result = await KClient.repayBorrow(borrowAmount, {value: ethers.BigNumber.from(gas).add(borrowAmount)})
-        // console.log(result)
-        await result.wait(1);
-        console.log('tx hash: ', result.hash)
-    });
-
-task("redeemBNB", "redeem BNB")
-    .setAction(async ({}, hre) => {
-        if (hre.network.name !== 'sepolia') {
-            console.log('\x1b[31m%s\x1b[0m', '\n--------> Wrong network <--------\n')
-            return;
-        }
-        const deployer = (await hre.ethers.getSigners())[0].address;
-        let result
-        const kBNBAddress = (await hre.deployments.get('kBNB')).address
-        const borrowAmount = '1000000000000'
-
-        console.log('Estimating gas...')
-        const kBNBCentralHubAddress = (await hre.deployments.get('kBNBCentralHub')).address
-        const kBNBCentralHub = await hre.ethers.getContractAt('CentralHub', kBNBCentralHubAddress)
-        let gas = await kBNBCentralHub.calculateGas(deployer, borrowAmount, '1000')
-
-        console.log('Redeeming BNB...')
-        const kBNB = await hre.ethers.getContractAt('KErc20CrossChainDelegator', kBNBAddress)
-        result = await kBNB.redeemUnderlying(borrowAmount, {value: ethers.BigNumber.from(gas).mul(2)})
-        await result.wait(1);
-        console.log('tx hash: ', result.hash)
-    });
-
-task("sendETH", "deposit ETH")
-    .setAction(async ({}, hre) => {
-        if (hre.network.name !== 'sepolia') {
-            console.log('\x1b[31m%s\x1b[0m', '\n--------> Wrong Base network <--------\n')
-            return;
-        }
-        const deployer = (await hre.ethers.getSigners())[0].address;
-        const WETHRouterAddress = (await hre.deployments.get('WETHRouter')).address
-        const WETHRouter = await hre.ethers.getContractAt('WETHRouter', WETHRouterAddress)
-        let result = await WETHRouter.mint(deployer, {value: '10000000000000000'})
-        await result.wait(1);
-
-        console.log('tx hash: ', result.hash)
-    });
-
-task("sendETH2", "deposit ETH")
-    .setAction(async ({}, hre) => {
-        if (hre.network.name !== 'sepolia') {
-            console.log('\x1b[31m%s\x1b[0m', '\n--------> Wrong Base network <--------\n')
-            return;
-        }
-        const signer = (await hre.ethers.getSigners())[0]
-        const {WETH_ADDRESS} = getConfig(hre.network.name);
-        const weth = new hre.ethers.Contract(WETH_ADDRESS, WETH_ABI, signer);
-        const amountInWei = '100000000';
-
-        const tx = await weth.deposit({value: amountInWei});
-        await tx.wait();
-        console.log(`${amountInWei} ETH wrapped into WETH.`);
-
-        console.log('tx hash: ', tx.hash)
-
-        const kEthAddress = (await hre.deployments.get('kETH')).address
-        const kEth = await hre.ethers.getContractAt('KErc20Delegator', kEthAddress)
-        let result = await kEth.mint(amountInWei)
-        await result.wait()
-        console.log(`${amountInWei} WETH deposited.`);
-        console.log('tx hash: ', result.hash)
-    });
-
-task("borrowETH", "borrow ETH")
-    .setAction(async ({}, hre) => {
-        if (hre.network.name !== 'sepolia') {
-            console.log('\x1b[31m%s\x1b[0m', '\n--------> Wrong network <--------\n')
-            return;
-        }
-        const deployer = (await hre.ethers.getSigners())[0].address;
-
-        let result
-        const kETHAddress = (await hre.deployments.get('kETH')).address
-
-        const unitrollerAddress = (await hre.deployments.get('Unitroller')).address
-        const Comptroller = await hre.ethers.getContractAt('Comptroller', unitrollerAddress)
-        const currentAssetsIn = await Comptroller.getAssetsIn(deployer)
-        if (!currentAssetsIn.includes(kETHAddress)) {
-            console.log('Enabling collateral...')
-            result = await Comptroller.enterMarkets([kETHAddress])
-            await result.wait(1)
-        } else {
-            console.log('Collateral already enabled.')
-        }
-
-        console.log('Borrowing ETH...')
-        const kETH = await hre.ethers.getContractAt('KErc20Delegator', kETHAddress)
-        result = await kETH.borrow('1000000000')
-        await result.wait(1);
-        console.log('tx hash: ', result.hash)
-    });
-
-task("repayETH", "repay ETH")
-    .setAction(async ({}, hre) => {
-        if (hre.network.name !== 'sepolia') {
-            console.log('\x1b[31m%s\x1b[0m', '\n--------> Wrong network <--------\n')
-            return;
-        }
-        const deployer = (await hre.ethers.getSigners())[0].address;
-
-        let result
-        const WETHRouterAddress = (await hre.deployments.get('WETHRouter')).address
-
-        console.log('Repaying ETH...')
-        const WETHRouter = await hre.ethers.getContractAt('WETHRouter', WETHRouterAddress)
-        result = await WETHRouter.repayBorrowBehalf(deployer, {value:'1000000000'})
-        await result.wait(1);
-        console.log('tx hash: ', result.hash)
-    });
-
-task("redeemETH", "redeem ETH")
-    .setAction(async ({}, hre) => {
-        if (hre.network.name !== 'sepolia') {
-            console.log('\x1b[31m%s\x1b[0m', '\n--------> Wrong network <--------\n')
-            return;
-        }
-        const deployer = (await hre.ethers.getSigners())[0].address;
-
-        let result
-        const kETHAddress = (await hre.deployments.get('kETH')).address
-        console.log('Redeeming ETH...')
-        const kETH = await hre.ethers.getContractAt('KErc20Delegator', kETHAddress)
-        result = await kETH.redeemUnderlying('1000000000')
-        await result.wait(1);
-        console.log('tx hash: ', result.hash)
-    });
-
 task("replayMsgSepolia", "replay msg to message hub sepolia")
     .setAction(async ({}, hre) => {
-        if (hre.network.name !== 'sepolia') {
+        if (hre.network.name !== hre.userConfig.defaultNetwork) {
             console.log('\x1b[31m%s\x1b[0m', '\n--------> Wrong network <--------\n')
             return;
         }
@@ -1130,7 +890,7 @@ task("replayMsgSepolia", "replay msg to message hub sepolia")
         const commandId = '0xd755b320e70ac22f12a02ca389945dc448f0f07567ae990e2c589dfeb9a9ab68'
         const sourceChain = 'binance'
         const sourceAddress = '0xE82fDEE72c6B7F729c66c281f2CDf33b0B2CF23f'
-        const payload ='0x40c10f19000000000000000000000000000000000000000000000000000000000000000000000000000000006027862a465ef7d842e32a8a16a39d4d83c25d3a00000000000000000000000000000000000000000000000000005af3107a4000'
+        const payload = '0x40c10f19000000000000000000000000000000000000000000000000000000000000000000000000000000006027862a465ef7d842e32a8a16a39d4d83c25d3a00000000000000000000000000000000000000000000000000005af3107a4000'
         const kBNBCentralHubAddress = (await hre.deployments.get('kBNBCentralHub')).address
         const kBNBCentralHub = await hre.ethers.getContractAt('CentralHub', kBNBCentralHubAddress)
         result = await kBNBCentralHub.estimateGas.execute(
@@ -1160,7 +920,7 @@ task("replayMsgSepolia", "replay msg to message hub sepolia")
 
 task("replayMsgBsc", "replay msg to client bsc")
     .setAction(async ({}, hre) => {
-        if (hre.network.name !== 'bnbTestnet') {
+        if (hre.network.name !== 'bscTestnet') {
             console.log('\x1b[31m%s\x1b[0m', '\n--------> Wrong network <--------\n')
             return;
         }
@@ -1168,7 +928,7 @@ task("replayMsgBsc", "replay msg to client bsc")
         const commandId = '0x89d158e6a23e41020a2c015375eee6096687217ddccbf59c73c7fc89bf87ca97'
         const sourceChain = 'ethereum-sepolia'
         const sourceAddress = '0x1362856d8577D8eB638102F8C18eeb716f4a0612'
-        const payload ='0x0000000000000000000000006027862a465ef7d842e32a8a16a39d4d83c25d3a000000000000000000000000000000000000000000000000000009184e72a000'
+        const payload = '0x0000000000000000000000006027862a465ef7d842e32a8a16a39d4d83c25d3a000000000000000000000000000000000000000000000000000009184e72a000'
 
 
         const {TOKENS} = getConfig(hre.network.name);
@@ -1210,7 +970,7 @@ task("adminWithdraw", "admin withdraw Native")
         const bnb = TOKENS.find(t => t.symbol == "BNB");
         let contract
         let contractAddress
-        if (hre.network.name == 'sepolia') {
+        if (hre.network.name == hre.userConfig.defaultNetwork) {
             contractAddress = (await hre.deployments.get('kBNB')).address;
             contract = await hre.ethers.getContractAt("KErc20CrossChainDelegator", contractAddress)
         } else {
@@ -1310,32 +1070,23 @@ task("balances", "deposit ETH")
         console.log('kbnb balance', res)
     });
 
-task("checkMarkets", "enter protocol markets")
+task("lzgas", 'change lz gas limit')
     .setAction(async ({}, hre) => {
-        const kbnbAddress = (await hre.deployments.get('kBNB')).address
-        const kethAddress = (await hre.deployments.get('kETH')).address
-        const UNITROLLER_ADDRESS = (await hre.deployments.get('Unitroller')).address
-        const comptroller = await hre.ethers.getContractAt('Comptroller', UNITROLLER_ADDRESS)
-        const result = await comptroller.getAllMarkets()
-        for (let res of result) {
-            if (res === kbnbAddress) {
-                console.log('Current kBNB', res)
-            } else if (res === kethAddress) {
-                console.log('Current kETH', res)
-            } else {
-                console.log(res)
+        const gasLimit = 600000
+        const NATIVE_SYMBOL = "SEI"
+
+        const {TOKENS} = getConfig(hre.network.name);
+        const tokens = TOKENS.filter(r => r.symbol !== NATIVE_SYMBOL)
+        const adapterTypes = ['LayerZero']
+        for (const token of tokens) {
+            for (const adapterType of adapterTypes) {
+                const adapterName = token.kToken.symbol + 'Adapter' + adapterType
+                console.log(`Configuring ${adapterName}...`)
+                const adapterAddress = (await hre.deployments.get(adapterName)).address
+                const adapter = await hre.ethers.getContractAt('Adapter' + adapterType, adapterAddress)
+                let result = await adapter._setGasLimit(gasLimit)
+                await result.wait(1)
             }
         }
     });
-
-task("checktest", "")
-    .setAction(async ({}, hre) => {
-        const kbnbAddress = (await hre.deployments.get('kBNB')).address
-        const kethAddress = (await hre.deployments.get('kETH')).address
-        const kETH = await hre.ethers.getContractAt('KErc20Delegator', kethAddress)
-
-        const res = await kETH.initialize()
-    });
-
-
 

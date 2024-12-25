@@ -79,8 +79,7 @@ contract AdapterWormhole is BaseAdapter, IWormholeReceiver {
     }
 
     function calculateGas(
-        bytes memory payload,
-        uint gasLimit
+        bytes memory payload
     ) external view override returns (uint cost) {
         (cost,) = IWormholeRelayer(wormholeRelayer).quoteEVMDeliveryPrice(
             peerChain,
@@ -94,7 +93,7 @@ contract AdapterWormhole is BaseAdapter, IWormholeReceiver {
         bytes calldata payload
     ) external payable override {
 
-        uint cost = this.calculateGas('', 600000);
+        uint cost = this.calculateGas('');
         _requireSenderCost(cost);
 
         IWormholeRelayerSend(wormholeRelayer).sendPayloadToEvm{value: cost}(
@@ -102,7 +101,7 @@ contract AdapterWormhole is BaseAdapter, IWormholeReceiver {
             peerContract.toAddress(),
             payload, // Payload contains the message and sender address
             0, // No receiver value needed
-            600000, // Gas limit for the transaction
+            gasLimit, // Gas limit for the transaction
             thisChain,
             sender
         );

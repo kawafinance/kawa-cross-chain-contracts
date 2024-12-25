@@ -8,7 +8,6 @@ import "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGate
 
 contract AdapterAxelar is BaseAdapter, AxelarExecutable {
 
-
     string public peerContract;
     string public peerChain;
     IAxelarGasService public gasReceiver;
@@ -77,8 +76,7 @@ contract AdapterAxelar is BaseAdapter, AxelarExecutable {
     }
 
     function calculateGas(
-        bytes memory payload,
-        uint gasLimit
+        bytes memory payload
     ) external view override returns (uint cost) {
 
         cost = gasReceiver.estimateGasFee(
@@ -95,7 +93,7 @@ contract AdapterAxelar is BaseAdapter, AxelarExecutable {
         bytes calldata payload
     ) external payable override {
 
-        uint cost = this.calculateGas(payload, 2000);
+        uint cost = this.calculateGas(payload);
         _requireSenderCost(cost);
 
         gasReceiver.payNativeGasForContractCall{value: cost}(

@@ -9,7 +9,7 @@ import { Artifacts } from "../config/types";
 const func = async function (hre: HardhatRuntimeEnvironment) {
 
   const { WETH_ADDRESS } = getConfig(hre.network.name);
-  const kETHAddress = (await hre.deployments.get('kETH')).address
+  const kETHAddress = (await hre.deployments.get('kSEI')).address
 
   const deployer = (await hre.ethers.getSigners())[0].address;
   

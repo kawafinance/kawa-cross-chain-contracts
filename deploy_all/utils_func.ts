@@ -1,7 +1,7 @@
 import path from "path";
 import {readFileSync} from "fs";
 
-export function getDeploymentAddress(networkName: string, contractName: string) {
+export const getDeploymentAddress =(networkName: string, contractName: string) => {
     let returnAddress = "0x0000000000000000000000000000000000000000"
     try {
         // Construct the path to the deployment file
@@ -18,4 +18,8 @@ export function getDeploymentAddress(networkName: string, contractName: string) 
     }
 
     return returnAddress;
+}
+
+export const delay = (ms: number) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }

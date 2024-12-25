@@ -3,7 +3,7 @@ import {getConfig} from '../config'
 
 const func = async function (hre: HardhatRuntimeEnvironment) {
 
-    const NATIVE_SYMBOL = "ETH"
+    const NATIVE_SYMBOL = "SEI"
 
     const {TOKENS} = getConfig(hre.network.name);
     const KCLIENT_DELEGATE_ADDRESS = (await hre.deployments.get('KClientDelegate')).address

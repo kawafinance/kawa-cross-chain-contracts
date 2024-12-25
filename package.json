@@ -2,6 +2,9 @@
   "name": "kawa-cross-chain-contracts",
   "devDependencies": {
     "@axelar-network/axelar-gmp-sdk-solidity": "^6.0.0",
+    "@layerzerolabs/lz-evm-messagelib-v2": "^3.0.36",
+    "@layerzerolabs/lz-evm-protocol-v2": "^3.0.36",
+    "@layerzerolabs/oapp-evm": "^0.3.0",
     "@nomiclabs/buidler": "^1.4.8",
     "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@nomiclabs/hardhat-etherscan": "^3.0.0",
@@ -15,16 +18,21 @@
     "@typechain/hardhat": "^2.3.0",
     "@types/chai": "^4.3.1",
     "@types/mocha": "^9.1.1",
-    "@types/node": "^12.20.52",
+    "@types/node": "^22.10.2",
     "axios": "^1.7.7",
     "ethers": "^5.6.8",
     "hardhat": "^2.22.14",
     "hardhat-deploy": "^0.14.0",
+    "solidity-bytes-utils": "^0.8.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3",
     "wormhole-solidity-sdk": "^0.9.0"
   },
   "dependencies": {
     "dotenv": "^16.4.5"
-  }
+  },
+  "resolutions": {
+    "@openzeppelin/contracts": "^4.8.3"
+  },
+  "packageManager": "pnpm@9.15.1+sha512.1acb565e6193efbebda772702950469150cf12bcc764262e7587e71d19dc98a423dff9536e57ea44c49bdf790ff694e83c27be5faa23d67e0c033b583be4bfcf"
 }

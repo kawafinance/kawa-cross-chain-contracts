@@ -6,6 +6,7 @@ import {Artifacts} from "../config/types";
 import {task} from "hardhat/config";
 import {deployments} from "hardhat";
 import path from "path";
+import {delay} from "../deploy_all/utils_func";
 
 function getDeploymentAddress(networkName, contractName) {
     try {
@@ -26,7 +27,7 @@ function getDeploymentAddress(networkName, contractName) {
 
 task("deployBase", "deploy base conracts - not native")
     .setAction(async (taskArgs, hre) => {
-        if (hre.network.name !== 'sepolia') {
+        if (hre.network.name !== hre.userConfig.defaultNetwork) {
             console.log('Wrong Base network')
             return;
         }
@@ -34,7 +35,7 @@ task("deployBase", "deploy base conracts - not native")
         await hre.run("compile");
 
         const {TOKENS} = getConfig(hre.network.name);
-        const NATIVE_SYMBOL = 'ETH'
+        const NATIVE_SYMBOL = 'SEI'
         const tokens = TOKENS.filter(r => r.symbol !== NATIVE_SYMBOL)
 
         console.log("=== Deploying KErc20CrossChainDelegate implementation ===");
@@ -120,7 +121,7 @@ task("deployBase", "deploy base conracts - not native")
 
             try {
                 console.log('Updating config file...')
-                const configFilePath = `./config/bnbTestnet.ts`;
+                const configFilePath = `./config/bscTestnet.ts`;
                 let content = readFileSync(configFilePath, 'utf8');
                 const regex = /otherChainContract:\s*\S+/g;
                 content = content.replace(regex, `otherChainContract: "${MESSAGEHUB_ADDRESS}",`);
@@ -221,7 +222,7 @@ task("deployBase", "deploy base conracts - not native")
 
 task("supportMarkets", "support markets - not native")
     .setAction(async (taskArgs, hre) => {
-        if (hre.network.name !== 'sepolia') {
+        if (hre.network.name !== hre.userConfig.defaultNetwork) {
             console.log('Wrong Base network')
             return;
         }
@@ -229,7 +230,7 @@ task("supportMarkets", "support markets - not native")
         await hre.run("compile");
 
         const {TOKENS} = getConfig(hre.network.name);
-        const NATIVE_SYMBOL = 'ETH'
+        const NATIVE_SYMBOL = 'SEI'
         const tokens = TOKENS.filter(r => r.symbol !== NATIVE_SYMBOL)
         const UNITROLLER_ADDRESS = (await hre.deployments.get('Unitroller')).address
         const comptroller = await hre.ethers.getContractAt('Comptroller', UNITROLLER_ADDRESS)
@@ -256,7 +257,7 @@ task("supportMarkets", "support markets - not native")
 
 task("updateBase", "update base conracts - not native")
     .setAction(async (taskArgs, hre) => {
-        if (hre.network.name !== 'sepolia') {
+        if (hre.network.name !== hre.userConfig.defaultNetwork) {
             console.log('Wrong Base network')
             return;
         }
@@ -264,7 +265,7 @@ task("updateBase", "update base conracts - not native")
         await hre.run("compile");
 
         const {TOKENS} = getConfig(hre.network.name);
-        const NATIVE_SYMBOL = 'ETH'
+        const NATIVE_SYMBOL = 'SEI'
 
         console.log("=== Deploying KErc20CrossChainDelegate implementation ===");
         const deployer = (await hre.ethers.getSigners())[0].address;
@@ -292,7 +293,7 @@ task("updateBase", "update base conracts - not native")
 task("updateImpl", "update bnb implementation")
     .setAction(async ({}, hre) => {
 
-        if (hre.network.name !== 'sepolia') {
+        if (hre.network.name !== hre.userConfig.defaultNetwork) {
             console.log('Wrong Base network')
             return;
         }
@@ -300,7 +301,7 @@ task("updateImpl", "update bnb implementation")
         await hre.run("compile");
 
         const {TOKENS} = getConfig(hre.network.name);
-        const NATIVE_SYMBOL = 'ETH'
+        const NATIVE_SYMBOL = 'SEI'
         const deployer = (await hre.ethers.getSigners())[0].address;
 
 
@@ -329,46 +330,83 @@ task("updateImpl", "update bnb implementation")
 task("updateMsgHub", "update bnb MessageHub implementation")
     .setAction(async ({}, hre) => {
 
-        const clientTag = hre.network.name === 'sepolia' ? '' : 'Client'
-
         await hre.run("compile");
 
-        const {TOKENS, AXELAR_GATEWAY, AXELAR_GAS_RECEIVER} = getConfig(hre.network.name);
-        const NATIVE_SYMBOL = 'ETH'
-        const deployer = (await hre.ethers.getSigners())[0].address;
+        const updateScripts = [
+            "../deploy_all/00_Deploy_MessageHubs.ts",
+            "../deploy_all/30_Configure_MessageHubs.ts"
+        ];
 
-        const tokens = TOKENS.filter(r => r.symbol !== NATIVE_SYMBOL)
-        for (const token of tokens) {
-            const kTokenAddress = (await hre.deployments.get(token.kToken.symbol + clientTag)).address
+        for (const script of updateScripts) {
+            console.log("")
+            console.log(`\t\t\t\tRunning ${script}...`);
+            console.log("")
 
-            console.log("=== Deploying " + token.kToken.symbol + "MessageHub" + clientTag + " ===");
+            const deployFunction = require(script).default;
 
-            const messageHubArgs = [
-                kTokenAddress,
-                AXELAR_GATEWAY,
-                AXELAR_GAS_RECEIVER,
-                token.otherChainMessageHub,
-                token.otherChain
-            ]
+            await deployFunction(hre);
 
-            const messageHub = await hre.deployments.deploy(token.kToken.symbol + "MessageHub" + clientTag, {
-                from: deployer,
-                contract: 'MessageHub',
-                args: messageHubArgs,
-                log: true,
-                deterministicDeployment: false,
-            });
-
-            console.log(`Deployed ${token.kToken.symbol}MessageHub at : ${messageHub.address}\n`);
-
-            console.log(`=== Configuring ${token.kToken.symbol} ===`);
-            const kBNB = await hre.ethers.getContractAt(
-                hre.network.name === 'sepolia' ? 'KErc20CrossChainDelegator' : 'KClient',
-                kTokenAddress
-            )
-            let result = await kBNB._setMessageHub(messageHub.address)
-            await result.wait(1);
+            await delay(5000);
         }
+        
+        // const clientTag = hre.network.name === hre.userConfig.defaultNetwork ? '' : 'Client'
+        //
+        //
+        // const {TOKENS, LAYERZERO_ENDPOINT} = getConfig(hre.network.name);
+        // const NATIVE_SYMBOL = 'SEI'
+        // const deployer = (await hre.ethers.getSigners())[0].address;
+        // let result
+        // const tokens = TOKENS.filter(r => r.symbol !== NATIVE_SYMBOL)
+        // for (const token of tokens) {
+        //     const kTokenAddress = (await hre.deployments.get(token.kToken.symbol + clientTag)).address
+        //
+        //     console.log("=== Deploying " + token.kToken.symbol + "CentralHub ===");
+        //
+        //     const centralHub = await hre.deployments.deploy(token.kToken.symbol + "CentralHub", {
+        //         from: deployer,
+        //         contract: 'CentralHub',
+        //         args: [kTokenAddress],
+        //         log: true,
+        //         deterministicDeployment: false,
+        //     });
+        //
+        //     console.log(`Deployed ${token.kToken.symbol}CentralHub at : ${centralHub.address}\n`);
+        //
+        //     console.log(`=== Configuring ${token.kToken.symbol} ===`);
+        //     const kBNB = await hre.ethers.getContractAt(
+        //         hre.network.name === hre.userConfig.defaultNetwork ? 'KErc20CrossChainDelegator' : 'KClient',
+        //         kTokenAddress
+        //     )
+        //     result = await kBNB._setCentralHub(centralHub.address)
+        //     await result.wait(1);
+        //
+        //
+        //     const adapterName = token.kToken.symbol + "AdapterLayerZero"
+        //     console.log("=== Deploying " + adapterName + " ===");
+        //
+        //     const peerContract = getDeploymentAddress(token.peerChain!, adapterName);
+        //
+        //     const layerZeroArgs = [
+        //         centralHub.address,
+        //         hre.ethers.utils.hexZeroPad(peerContract, 32),
+        //         token.adapters?.layerZero.peerChain,
+        //         LAYERZERO_ENDPOINT
+        //     ]
+        //
+        //     const adapterLayerZero = await hre.deployments.deploy(adapterName, {
+        //         from: deployer,
+        //         contract: 'AdapterLayerZero',
+        //         args: layerZeroArgs,
+        //         log: true,
+        //         deterministicDeployment: false,
+        //     });
+        //
+        //     console.log(`Deployed ${token.kToken.symbol}AdapterLayerZero at : ${adapterLayerZero.address}\n`);
+        //
+        //
+        //
+        //
+        // }
     });
 
 task("configMsgHub", "config MessageHub")
@@ -376,37 +414,48 @@ task("configMsgHub", "config MessageHub")
 
         await hre.run("compile");
 
-        const {TOKENS} = getConfig(hre.network.name);
-        const NATIVE_SYMBOL = 'ETH'
-        const clientTag = hre.network.name === 'sepolia' ? '' : 'Client'
-        const otherClientTag = hre.network.name === 'sepolia' ? 'Client' : ''
+        const configScripts = [
+            "../deploy_all/30_Configure_MessageHubs.ts"
+        ];
 
-        const tokens = TOKENS.filter(r => r.symbol !== NATIVE_SYMBOL)
-        for (const token of tokens) {
-            const otherChain = token.otherChain === 'binance'
-                ? 'bnbTestnet'
-                : token.otherChain === 'ethereum-sepolia'
-                    ? 'sepolia'
-                    : token.otherChain
+        for (const script of configScripts) {
+            console.log("")
+            console.log(`\t\t\t\tRunning ${script}...`);
+            console.log("")
 
-            const clientContractAddress = getDeploymentAddress(otherChain, token.kToken.symbol + "MessageHub" + otherClientTag);
-            if (clientContractAddress !== '') {
-                const messageHubAddress = (await hre.deployments.get(token.kToken.symbol + "MessageHub" + clientTag)).address;
-                const MessageHub = await hre.ethers.getContractAt('MessageHub', messageHubAddress)
-                console.log(`=== Configuring ${token.kToken.symbol}MessageHub${clientTag} ===`);
-                let result = await MessageHub._setClientContract(token.otherChainMessageHub!)
-                await result.wait(1);
-            } else {
-                console.log(token.kToken.symbol, "OtherChainContract not found.");
-            }
+            const deployFunction = require(script).default;
+
+            await deployFunction(hre);
+
+            await delay(5000);
         }
+        //
+        // const {TOKENS} = getConfig(hre.network.name);
+        // const NATIVE_SYMBOL = 'SEI'
+        // const clientTag = hre.network.name === hre.userConfig.defaultNetwork ? '' : 'Client'
+        // const otherClientTag = hre.network.name === hre.userConfig.defaultNetwork ? 'Client' : ''
+        //
+        // const tokens = TOKENS.filter(r => r.symbol !== NATIVE_SYMBOL)
+        // for (const token of tokens) {
+        //
+        //     const clientContractAddress = getDeploymentAddress(token.peerChain, token.kToken.symbol + "MessageHub" + otherClientTag);
+        //     if (clientContractAddress !== '') {
+        //         const messageHubAddress = (await hre.deployments.get(token.kToken.symbol + "MessageHub" + clientTag)).address;
+        //         const MessageHub = await hre.ethers.getContractAt('MessageHub', messageHubAddress)
+        //         console.log(`=== Configuring ${token.kToken.symbol}MessageHub${clientTag} ===`);
+        //         let result = await MessageHub._setClientContract(token.otherChainMessageHub!)
+        //         await result.wait(1);
+        //     } else {
+        //         console.log(token.kToken.symbol, "OtherChainContract not found.");
+        //     }
+        // }
     });
 
 
 task("configMarkets", "config markets")
     .setAction(async ({}, hre) => {
 
-        if (hre.network.name !== 'sepolia') {
+        if (hre.network.name !== hre.userConfig.defaultNetwork) {
             console.log('Wrong Base network')
             return;
         }
@@ -486,7 +535,7 @@ task("configMarkets", "config markets")
 
 task("updateClient", "update all client conracts")
     .setAction(async (taskArgs, hre) => {
-        if (hre.network.name !== 'bnbTestnet') {
+        if (hre.network.name !== 'bscTestnet') {
             console.log('Wrong Client network')
             return;
         }
@@ -505,7 +554,7 @@ task("updateClient", "update all client conracts")
 
 task("configClient", "config all client conracts")
     .setAction(async (taskArgs, hre) => {
-        if (hre.network.name !== 'bnbTestnet') {
+        if (hre.network.name !== 'bscTestnet') {
             console.log('Wrong Client network')
             return;
         }

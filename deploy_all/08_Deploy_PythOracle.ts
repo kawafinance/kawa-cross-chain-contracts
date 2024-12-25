@@ -41,7 +41,7 @@ const func = async function (hre: HardhatRuntimeEnvironment) {
 
     const comptroller = await hre.ethers.getContractAt('Comptroller', UNITROLLER_ADDRESS)
     const setPriceOracleResult = await comptroller._setPriceOracle(pythOracle.address);
-    await setPriceOracleResult.wait(1);
+    await setPriceOracleResult.wait(3);
 
     console.log("=== Configuring PythOracle ===");
 
@@ -60,7 +60,7 @@ const func = async function (hre: HardhatRuntimeEnvironment) {
     const pythOracleContract = await hre.ethers.getContractAt('PythOracle', pythOracle.address)
     // @ts-ignore
     const result = await pythOracleContract.updatePythPriceIds(priceFeedTokens.map(r => r.contractAddress), priceFeedTokens.map(r => r.priceFeed))
-    await result.wait(1)
+    await result.wait(3)
 }
 
 export default func

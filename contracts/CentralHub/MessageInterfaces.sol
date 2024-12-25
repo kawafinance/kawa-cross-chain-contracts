@@ -8,8 +8,7 @@ abstract contract MessageInterface {
     ) external payable virtual;
 
     function calculateGas(
-        bytes memory payload,
-        uint gasLimit
+        bytes memory payload
     ) external view virtual returns (uint cost);
 }
 

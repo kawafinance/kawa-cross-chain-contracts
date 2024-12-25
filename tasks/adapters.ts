@@ -4,40 +4,29 @@ import {getConfig} from "../config";
 
 task("listAdapters", "list all Central Hub Adapters")
     .setAction(async (taskArgs, hre) => {
-        const centralHubAddress = (await hre.deployments.get('kBNBCentralHub')).address
-        const centralHub = await hre.ethers.getContractAt('CentralHub', centralHubAddress)
-        let more = true
-        let count = 0
-        while (more) {
-            try {
-                let result = await centralHub.adapters(count)
-                console.log(count, result)
-                count++
-            } catch (e) {
-                more = false
+        const NATIVE_SYMBOL = "SEI"
+
+        const {TOKENS} = getConfig(hre.network.name);
+        const tokens = TOKENS.filter(r => r.symbol !== NATIVE_SYMBOL)
+        for (const token of tokens) {
+            console.log(token.kToken.symbol + 'CentralHub')
+            const centralHubAddress = (await hre.deployments.get(token.kToken.symbol +'CentralHub')).address
+            const centralHub = await hre.ethers.getContractAt('CentralHub', centralHubAddress)
+            let more = true
+            let count = 0
+            while (more) {
+                try {
+                    let result = await centralHub.adapters(count)
+                    console.log(count, result)
+                    count++
+                } catch (e) {
+                    more = false
+                }
             }
         }
     })
 
 task("removeAdapters", "remove all Central Hub Adapters")
-    .setAction(async (taskArgs, hre) => {
-        const centralHubAddress = (await hre.deployments.get('kBNBCentralHub')).address
-        const centralHub = await hre.ethers.getContractAt('CentralHub', centralHubAddress)
-        let more = true
-        let count = 0
-        let result
-        while (more) {
-            try {
-                const adapter = await centralHub.adapters(0)
-                result = await centralHub._removeAdapter(adapter)
-                await result.wait(1);
-            } catch (e) {
-                more = false
-            }
-        }
-    })
-
-task("configAdapters", "config all Central Hub Adapters")
     .setAction(async (taskArgs, hre) => {
         const centralHubAddress = (await hre.deployments.get('kBNBCentralHub')).address
         const centralHub = await hre.ethers.getContractAt('CentralHub', centralHubAddress)
@@ -101,10 +90,7 @@ task("updateWormhole", "update Wormhole Adapters")
             WORMHOLE_CHAIN_ID
         } = getConfig(hre.network.name);
         const centralHubAddress = (await hre.deployments.get('kBNBCentralHub')).address
-        const NATIVE_SYMBOL = "ETH"
-        const otherChain = hre.network.name === 'sepolia'
-            ? 'bnbTestnet'
-            : 'sepolia'
+        const NATIVE_SYMBOL = "SEI"
         const deployer = (await hre.ethers.getSigners())[0].address;
 
         await hre.run("compile");
@@ -113,7 +99,7 @@ task("updateWormhole", "update Wormhole Adapters")
 
         for (const token of tokens) {
             const  adapterName = token.kToken.symbol + "AdapterWormhole";
-            const peerWormholeContractAddress = getDeploymentAddress(otherChain, adapterName);
+            const peerWormholeContractAddress = getDeploymentAddress(token.peerChain!, adapterName);
             const wormholeArgs = [
                 centralHubAddress,
                 hre.ethers.utils.hexZeroPad(peerWormholeContractAddress, 32),

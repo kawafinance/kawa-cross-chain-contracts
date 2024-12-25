@@ -17,6 +17,9 @@ export type Config = {
   WORMHOLE_RELAYER: string,
   WORMHOLE_CHAIN_ID: number,
 
+  LAYERZERO_ENDPOINT: string,
+  LAYERZERO_CHAINID: number,
+
   WETH_ADDRESS: string
 
   // Comptroller params
@@ -83,11 +86,15 @@ export type Token = {
   // If null, the a chainlink price feed will be deployed.
   priceFeed: string | null
   priceFeedBeta?: string | null
+  peerChain: string | null,
   adapters:{
     axelar:{
       peerChain: string
     },
     wormhole: {
+      peerChain: number
+    },
+    layerZero: {
       peerChain: number
     }
   } | null

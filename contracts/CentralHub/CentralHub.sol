@@ -3,10 +3,14 @@ pragma solidity 0.8.20;
 
 import "./MessageInterfaces.sol";
 import "../KTokenInterfaces.sol";
+import "../libs/UintToStrUtils.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 // todo make this upgradable
 contract CentralHub is CentralHubInterfae, Ownable {
+
+    using UintToStrUtils for uint256;
+
     address public kToken;
     address[] public adapters;
 
@@ -57,14 +61,28 @@ contract CentralHub is CentralHubInterfae, Ownable {
         emit RemoveAdapter(adapter);
     }
 
+    function calculateGas(
+        bytes calldata payload
+    ) external view override returns (uint cost){
+        cost = 0;
+        for (uint256 i = 0; i < adapters.length; i++) {
+            cost += MessageInterface(adapters[i]).calculateGas(payload);
+        }
+    }
+
     function sendMessage(
         address sender,
         bytes calldata payload
     ) external payable override {
-        require(msg.sender == kToken, "Only market can send messages");
+        uint cost = this.calculateGas(payload);
+        _requireSenderCost(cost);
 
         for (uint256 i = 0; i < adapters.length; i++) {
             MessageInterface(adapters[i]).sendMessage{value: msg.value}(sender, payload);
+        }
+
+        if (msg.value - cost > 0) {
+            _sendEth(payable(sender), msg.value - cost);
         }
     }
 
@@ -72,16 +90,6 @@ contract CentralHub is CentralHubInterfae, Ownable {
         bytes calldata payload
     ) external override onlyAdapters {
         _executeAction(payload);
-    }
-
-    function calculateGas(
-        bytes calldata payload,
-        uint gasLimit
-    ) external view override returns (uint cost){
-        cost = 0;
-        for (uint256 i = 0; i < adapters.length; i++) {
-            cost += MessageInterface(adapters[i]).calculateGas(payload, gasLimit);
-        }
     }
 
     function _executeAction(bytes calldata payload) internal {
@@ -102,6 +110,24 @@ contract CentralHub is CentralHubInterfae, Ownable {
         } else {
             revert("Unknown function selector");
         }
+    }
+
+    function _sendEth(
+        address payable recipient,
+        uint amount
+    ) internal {
+        (bool success,) = recipient.call{value: amount}("");
+        require(success, "Refund  failed");
+    }
+
+    function _requireSenderCost(
+        uint cost
+    ) internal {
+        require(msg.sender == kToken, "Unauthorized");
+        require(
+            msg.value >= cost,
+            string(abi.encodePacked("Insufficient funds for cross-chain message. Sent: ", msg.value.uint2str(), " Required: ", cost.uint2str()))
+        );
     }
 
     function _isAdapterExists(address adapter) internal view returns (bool) {

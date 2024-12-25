@@ -5,7 +5,7 @@ import {getConfig} from '../config'
 
 const func = async function (hre: HardhatRuntimeEnvironment) {
 
-    const NATIVE_SYMBOL = "ETH"
+    const NATIVE_SYMBOL = "SEI"
 
     const {TOKENS} = getConfig(hre.network.name);
 
@@ -99,7 +99,7 @@ const func = async function (hre: HardhatRuntimeEnvironment) {
         }
 
         // try {
-        //     const configFilePath = `./config/bnbTestnet.ts`;
+        //     const configFilePath = `./config/bscTestnet.ts`;
         //     let content = readFileSync(configFilePath, 'utf8');
         //     const regex = /otherChainCentralHub:\s*\S+/g;
         //     content = content.replace(regex, `otherChainCentralHub: "${centralHub.address}",`);
