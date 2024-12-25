@@ -1,6 +1,7 @@
 import {task} from "hardhat/config";
 import {getConfig} from "../config";
 import * as ethers from "ethers";
+import {delay} from "../deploy_all/utils_func";
 
 task("disableBorrowAll", "disable Borrow on all markets")
     .setAction(async (taskArgs, hre) => {
@@ -154,5 +155,27 @@ task("collateralFactorAll", "enable collateral factor on all markets")
             );
             await result.wait(1);
             console.log('')
+        }
+    })
+
+task("deployMarkets", "run Deploy_Markets script")
+    .setAction(async ({}, hre) => {
+
+        await hre.run("compile")
+
+        const configScripts = [
+            "../deploy_all/Deploy_Markets.ts"
+        ];
+
+        for (const script of configScripts) {
+            console.log("")
+            console.log(`\t\t\t\tRunning ${script}...`);
+            console.log("")
+
+            const deployFunction = require(script).default;
+
+            await deployFunction(hre);
+
+            await delay(5000);
         }
     })

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity 0.8.20;
-import "./MessageHub/MessageHubInterfaces.sol";
+import "./CentralHub/MessageInterfaces.sol";
 import "./KTokenInterfaces.sol";
 
 
@@ -14,7 +14,7 @@ contract KClient is KClientInterface {
             msg.sender,
             mintAmount
         );
-        MessageHubClientInterface(messageHub).sendMessage{value: msg.value - mintAmount}(
+        MessageInterface(centralHub).sendMessage{value: msg.value - mintAmount}(
             msg.sender,
             payload
         );
@@ -26,7 +26,7 @@ contract KClient is KClientInterface {
             msg.sender,
             repayAmount
         );
-        MessageHubClientInterface(messageHub).sendMessage{value: msg.value - repayAmount}(
+        MessageInterface(centralHub).sendMessage{value: msg.value - repayAmount}(
             msg.sender,
             payload
         );
@@ -42,7 +42,7 @@ contract KClient is KClientInterface {
             borrower,
             repayAmount
         );
-        MessageHubClientInterface(messageHub).sendMessage{value: msg.value - repayAmount}(
+        MessageInterface(centralHub).sendMessage{value: msg.value - repayAmount}(
             msg.sender,
             payload
         );
@@ -60,36 +60,38 @@ contract KClient is KClientInterface {
             repayAmount,
             kTokenCollateral
         );
-        MessageHubClientInterface(messageHub).sendMessage{value: msg.value - repayAmount}(
+        MessageInterface(centralHub).sendMessage{value: msg.value - repayAmount}(
             msg.sender,
             payload
         );
     }
 
 
-    /*** MessageHub Interface ***/
+    /*** CentralHub Interface ***/
 
     function releaseETH(
         address payable recipient,
         uint amount
     ) external override returns (bool){
-        require(msg.sender == messageHub, "Unauthorized");
+        require(msg.sender == centralHub, "Unauthorized");
         (bool success,) = recipient.call{value: amount}("");
         return success;
     }
 
     /*** Admin Functions ***/
 
-    function _setMessageHub(address newMessageHub) external {
+    function _setCentralHub(address newCentralHub) external returns (bool){
         require(msg.sender == admin, "Unauthorized");
 
-        address oldMessageHub = messageHub;
-        messageHub = newMessageHub;
+        address oldCentralHub = centralHub;
+        centralHub = newCentralHub;
 
-        emit NewMessageHub(
-            oldMessageHub,
-            messageHub
+        emit NewCentralHub(
+            oldCentralHub,
+            centralHub
         );
+
+        return true;
     }
 
     receive() external payable {}

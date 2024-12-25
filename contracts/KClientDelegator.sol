@@ -11,7 +11,7 @@ import "./KTokenInterfaces.sol";
 contract KClientDelegator is KClientInterface, KDelegatorInterface {
 
     constructor(
-        address messageHub_,
+        address centralHub_,
         address payable admin_,
         address implementation_,
         bytes memory becomeImplementationData
@@ -23,8 +23,8 @@ contract KClientDelegator is KClientInterface, KDelegatorInterface {
         delegateTo(
             implementation_,
             abi.encodeWithSignature(
-                "_setMessageHub(address)",
-                messageHub_
+                "_setCentralHub(address)",
+                centralHub_
             )
         );
 
@@ -195,11 +195,10 @@ contract KClientDelegator is KClientInterface, KDelegatorInterface {
         return abi.decode(data, (uint));
     }
 
-    function _setMessageHub(address newMessageHub) external returns (uint)  {
-        bytes memory data = delegateToImplementation(
-            abi.encodeWithSignature("_setMessageHub(address)", newMessageHub)
+    function _setCentralHub(address newCentralHub) external {
+        delegateToImplementation(
+            abi.encodeWithSignature("_setCentralHub(address)", newCentralHub)
         );
-        return abi.decode(data, (uint));
     }
 
     /**

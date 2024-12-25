@@ -8,7 +8,7 @@ import { Artifacts } from "../config/types";
 // todo change to use wrapper
 const func = async function (hre: HardhatRuntimeEnvironment) {
 
-  const NATIVE_SYMBOL = "ETH"
+  const NATIVE_SYMBOL = "SEI"
   const { TOKENS } = getConfig(hre.network.name);
 
   const UNITROLLER_ADDRESS =  (await hre.deployments.get('Unitroller')).address

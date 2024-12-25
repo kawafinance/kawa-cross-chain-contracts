@@ -18,6 +18,12 @@ export const config: Config = {
   AXELAR_GATEWAY: "0xe432150cce91c13a887f7D836923d5597adD8E31",
   AXELAR_GAS_RECEIVER: "0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6",
   AXELAR_CHAIN_NAME: "ethereum-sepolia",
+
+  WORMHOLE_RELAYER: "0x7B1bD7a6b4E61c2a123AC6BC2cbfC614437D0470",
+  WORMHOLE_CHAIN_ID: 10002,
+
+  LAYERZERO_ENDPOINT: "0x6EDCE65403992e310A62460808c4b910D972f10f",
+  LAYERZERO_CHAINID: 40161,
   
   WETH_ADDRESS: "0x7b79995e5f793a07bc00c21412e50ecae098e7f9",
 
@@ -27,7 +33,7 @@ export const config: Config = {
       symbol: "ETH",
       priceFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
       decimals: 18,
-      contractAddress: "0x7b79995e5f793a07bc00c21412e50ecae098e7f9",
+      contractAddress: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
       kToken: {
         symbol: "kETH",
         name: "Kawa ETH",
@@ -36,29 +42,20 @@ export const config: Config = {
         seizeShare: 3,
         address: null
       },
-      otherChainMessageHub: null,
-      otherChain: null,
       collateralFactor: 70,
-      borrowCap: 1
-    },
-    {
-      name: "BNB",
-      symbol: "BNB",
-      priceFeed: "0x2f95862b045670cd22bee3114c39763a4a08beeb663b145d283c31d7d1101c4f",
-      decimals: 18,
-      contractAddress: null,
-      kToken: {
-        symbol: "kBNB",
-        name: "Kawa BNB",
-        collateralFactor: 70,
-        reserveFactor: 30,
-        seizeShare: 3,
-        address: null
+      borrowCap: 0,
+      adapters: {
+        axelar:{
+          peerChain: "",//ethereum-sepolia
+        },
+        wormhole: {
+          peerChain: 0,//10002
+        },
+        layerZero: {
+          peerChain: 40258,
+        }
       },
-      otherChainMessageHub: "0x6f6318b3840C875106fDf1569776856022B4b28F",
-      otherChain: "binance",
-      collateralFactor: 70,
-      borrowCap: 1
+      peerChain: 'seiDevnet'
     }
   ]
 };

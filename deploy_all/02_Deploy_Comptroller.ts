@@ -40,7 +40,7 @@ const func = async function (hre: HardhatRuntimeEnvironment) {
 
   console.log("Accepting new implementation")
   const becomeResult = await comptrollerContract._become(UNITROLLER_ADDRESS);
-  await becomeResult.wait(1)
+  await becomeResult.wait(3)
 
   console.log("Proxy configured\n");
 
@@ -52,11 +52,11 @@ const func = async function (hre: HardhatRuntimeEnvironment) {
 
   console.log("Setting close factor");
   const setCloseFactorResult = await comptroller._setCloseFactor(CLOSE_FACTOR);
-  await setCloseFactorResult.wait(1)
+  await setCloseFactorResult.wait(3)
 
   console.log("Setting liquidation incentive\n")
   const setLiquidationIncentive = await comptroller._setLiquidationIncentive(LIQUIDATION_INCENTIVE);
-  await setLiquidationIncentive.wait(1)
+  await setLiquidationIncentive.wait(3)
 
   console.log("=== Setting Ownerships for Comptroller ===");
 
@@ -64,18 +64,18 @@ const func = async function (hre: HardhatRuntimeEnvironment) {
 
   console.log("Setting borrow cap guardian");
   let setGuardianResult = await comptroller._setBorrowCapGuardian(deployer);
-  await setGuardianResult.wait(1)
+  await setGuardianResult.wait(3)
 
   console.log("Setting pause guardian");
   setGuardianResult = await comptroller._setPauseGuardian(deployer);
-  await setGuardianResult.wait(1)
+  await setGuardianResult.wait(3)
 
   const adminAddress = deployer
   console.log("Admin:", adminAddress);
 
   console.log("Setting pending admin");
   const setAdminResult = await unitrollerContract._setPendingAdmin(adminAddress);
-  await setAdminResult.wait(1);
+  await setAdminResult.wait(3);
   console.log("")
 
 }

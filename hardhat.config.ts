@@ -16,7 +16,7 @@ const accountsMainnet = [process.env.PRIVATE_KEY_MAINNET || '']
 const accountsTestnet = [process.env.PRIVATE_KEY_TESTNET || '']
 
 const config: any = {
-  defaultNetwork: "sepolia",
+  defaultNetwork: "seiDevnet",
   solidity: {
     version: '0.8.20',
     settings: {
@@ -35,29 +35,29 @@ const config: any = {
       url: "http://localhost:3050",
       // ethNetwork: "http://localhost:8545",
     },
-    mainnet: {
+    seiMainnet: {
       chainId: 1329,
       url: "https://evm-rpc.sei-apis.com",
       accounts: accountsMainnet
     },
-    devnet: {
+    seiDevnet: {
       chainId: 713715,
       url: "https://evm-rpc-arctic-1.sei-apis.com",
       gas: 8400000,
       // blockGasLimit: 35000000,
       accounts: accountsTestnet
     },
-    testnet: {
+    seiTestnet: {
       chainId: 1328,
       url: "https://evm-rpc-testnet.sei-apis.com",
       accounts: accountsTestnet
     },
     sepolia: {
       chainId: 11155111,
-      url: "https://rpc.sepolia.org", //https://rpc.ankr.com/eth_sepolia  https://ethereum-sepolia.publicnode.com https://sepolia.rpc.thirdweb.com
+      url: "https://ethereum-sepolia.publicnode.com", //https://rpc.ankr.com/eth_sepolia  https://ethereum-sepolia.publicnode.com https://sepolia.rpc.thirdweb.com https://rpc.sepolia.org
       accounts: accountsTestnet
     },
-    bnbTestnet: {
+    bscTestnet: {
       chainId: 97,
       url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
       accounts: accountsTestnet

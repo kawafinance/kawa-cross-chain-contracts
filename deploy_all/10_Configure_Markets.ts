@@ -15,6 +15,7 @@ const func = async function (hre: HardhatRuntimeEnvironment) {
 
     for (const token of TOKENS) {
 
+        console.log('')
         console.log(`Configuring market for ${token.name}`);
         console.log(`==========================================`)
         console.log('')

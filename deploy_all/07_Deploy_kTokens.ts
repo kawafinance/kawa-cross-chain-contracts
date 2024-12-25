@@ -1,32 +1,13 @@
 import * as ethers from "ethers";
 import {HardhatRuntimeEnvironment} from "hardhat/types";
-import {readFile, readFileSync, existsSync, writeFileSync} from "fs";
 import {getConfig} from '../config'
-import path from "path";
-
-function getDeploymentAddress(networkName, contractName) {
-    try {
-        // Construct the path to the deployment file
-        const deploymentPath = path.resolve(
-            process.cwd(),
-            `deployments/${networkName}/${contractName}.json`
-        );
-
-        // Read and parse the deployment file
-        const deploymentData = JSON.parse(readFileSync(deploymentPath, "utf-8"));
-        return deploymentData.address;
-    } catch (error) {
-        // Return the zero address if deployment data is not found
-        return "0x0000000000000000000000000000000000000000";
-    }
-}
 
 
 const func = async function (hre: HardhatRuntimeEnvironment) {
 
-    const NATIVE_SYMBOL = "ETH"
+    const NATIVE_SYMBOL = "SEI"
 
-    const {TOKENS, AXELAR_GATEWAY, AXELAR_GAS_RECEIVER} = getConfig(hre.network.name);
+    const {TOKENS} = getConfig(hre.network.name);
 
     const UNITROLLER_ADDRESS = (await hre.deployments.get('Unitroller')).address
     const JUMPRATEMODEL_ADDRESS = (await hre.deployments.get('JumpRateModel')).address
@@ -67,30 +48,13 @@ const func = async function (hre: HardhatRuntimeEnvironment) {
             underlyingContractAddress = underlyingContract.address
         }
 
-        console.log("=== Deploying " + token.kToken.symbol + "MessageHub ===");
-
-        let otherChain = token.otherChain === 'binance' ? 'bnbTestnet' : token.otherChain
-        let clientContract = getDeploymentAddress(otherChain, token.kToken.symbol + "MessageHubClient");
-
-        const messageHubArgs = [
-            "0x0000000000000000000000000000000000000000",
-            AXELAR_GATEWAY,
-            AXELAR_GAS_RECEIVER,
-            clientContract,
-            token.otherChain
-        ]
-
-        const messageHub = await hre.deployments.deploy(token.kToken.symbol + "MessageHub", {
-            from: deployer,
-            contract: 'MessageHub',
-            args: messageHubArgs,
-            log: true,
-            deterministicDeployment: false,
-        });
-
-        console.log(`Deployed ${token.kToken.symbol}MessageHub at : ${messageHub.address}\n`);
-
         console.log("=== Deploying " + token.kToken.symbol + " implementation ===");
+        let centralHubAddress = "0x0000000000000000000000000000000000000000"
+        try {
+            centralHubAddress = (await hre.deployments.get(token.kToken.symbol + "CentralHub")).address
+        } catch (error) {
+            console.log('centralHubAddress not found. Using', centralHubAddress);
+        }
 
         const deploymentArgs = [
             underlyingContractAddress,
@@ -100,7 +64,7 @@ const func = async function (hre: HardhatRuntimeEnvironment) {
             token.kToken.name,
             token.kToken.symbol,
             ethers.BigNumber.from("8"),
-            messageHub.address,
+            centralHubAddress,
             deployer,
             KERC20_CROSSCHAIN_DELEGATE_ADDRESS,
             "0x00"
@@ -127,21 +91,23 @@ const func = async function (hre: HardhatRuntimeEnvironment) {
         result = await UnderlyingContract.transferOwnership(kTokenContract.address);
         await result.wait(1);
 
-        console.log(`Configuring ${token.kToken.symbol}MessageHub for ${token.kToken.name}...\n`);
-        const MessageHubContract = await hre.ethers.getContractAt("MessageHub", messageHub.address)
-        result = await MessageHubContract._setKToken(kTokenContract.address);
-        await result.wait(1);
-
-        try {
-            const configFilePath = `./config/bnbTestnet.ts`;
-            let content = readFileSync(configFilePath, 'utf8');
-            const regex = /otherChainMessageHub:\s*\S+/g;
-            content = content.replace(regex, `otherChainMessageHub: "${messageHub.address}",`);
-            writeFileSync(configFilePath, content, 'utf8');
-            console.log('Config file updated successfully.');
-        } catch (error) {
-            console.error('Error modifying config:', error);
+        if (centralHubAddress !== "0x0000000000000000000000000000000000000000") {
+            console.log(`Configuring ${token.kToken.symbol}CentralHub for ${token.kToken.name}...\n`);
+            const CentralHubContract = await hre.ethers.getContractAt("CentralHub", centralHubAddress)
+            result = await CentralHubContract._setKToken(kTokenContract.address);
+            await result.wait(1);
         }
+
+        // try {
+        //     const configFilePath = `./config/bscTestnet.ts`;
+        //     let content = readFileSync(configFilePath, 'utf8');
+        //     const regex = /otherChainCentralHub:\s*\S+/g;
+        //     content = content.replace(regex, `otherChainCentralHub: "${centralHub.address}",`);
+        //     writeFileSync(configFilePath, content, 'utf8');
+        //     console.log('Config file updated successfully.');
+        // } catch (error) {
+        //     console.error('Error modifying config:', error);
+        // }
     }
 }
 

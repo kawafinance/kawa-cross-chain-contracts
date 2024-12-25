@@ -244,8 +244,8 @@ abstract contract KTokenInterface is KTokenStorage {
 contract KErc20Storage {
     /// @notice Underlying asset for this KToken
     address public underlying;
-    /// @notice messageHub for this KToken
-    address public messageHub;
+    /// @notice centralHub for this KToken
+    address public centralHub;
 }
 
 abstract contract KErc20BaseInterface is KErc20Storage {
@@ -317,12 +317,12 @@ abstract contract KErc20CrossChainInterface {
 
     /*** Admin Functions ***/
 
-    function _setMessageHub(address newMessageHub) external virtual;
+    function _setCentralHub(address newCentralHub) external virtual;
 
     /// @notice Event emitted when the message hub is changed
-    event NewMessageHub(
-        address oldMessageHub,
-        address messageHub
+    event NewCentralHub(
+        address oldCentralHub,
+        address centralHub
     );
 }
 
@@ -366,7 +366,7 @@ abstract contract KDelegateInterface is KDelegationStorage {
 contract KClientStorage {
 
     /// @notice MessageHub implementation's address
-    address public messageHub;
+    address public centralHub;
 
     /// @notice Administrator for this contract
     address payable public admin;
@@ -412,8 +412,8 @@ abstract contract KClientInterface is KClientStorage {
     );
 
     /// @notice Event emitted when the message hub is changed
-    event NewMessageHub(
-        address oldMessageHub,
-        address messageHub
+    event NewCentralHub(
+        address oldClientHub,
+        address clientHub
     );
 }
