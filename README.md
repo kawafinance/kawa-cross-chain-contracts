@@ -1,13 +1,3 @@
-# Sample Hardhat Project
-
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
-
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.js
-```
+# Kawa Finance 
+This is the first version of the Proof of Concept for Kawa Finance's cross-chain EVM borrowing/lending protocol. It is based on a previous version of the Compound protocol, upgraded by Kawa to implement cross-chain functionality across EVM networks using Cross-Chain Messaging (XCM) protocols, such as Axelar, Wormhole, and LayerZero.
+The current version only requires one XCM protocol. However, the final goal is to implement a quorum across multiple XCM protocols for enhanced security.
